@@ -254,7 +254,7 @@ code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-siz
 
 /* Средняя ширина: шапка в две строки — логотип и пользователь, ниже разделы */
 @media (max-width: 1080px) {
-  .topbar-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 4px; padding: 8px 24px; }
+  .topbar-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 12px; padding: 16px 24px 14px; }
   .champ-chip { display: none; }
   .nav { grid-column: 1 / -1; }
   .user { margin-left: 0; justify-self: end; }
@@ -262,7 +262,7 @@ code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-siz
 
 /* Телефон */
 @media (max-width: 640px) {
-  .topbar-in { gap: 10px; padding: 8px 16px; }
+  .topbar-in { gap: 10px; row-gap: 10px; padding: 14px 16px 12px; }
   .champ-chip { display: none; }
   .user { flex-wrap: wrap; gap: 6px; }
   .user .col, .user .btn span { display: none; }
