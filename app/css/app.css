@@ -38,7 +38,11 @@ h3 { font-size: var(--fs-h3); font-weight: 700; }
 .nav a { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 12px; color: var(--ink); font-weight: 600; font-size: var(--fs-m); }
 .nav a:hover { background: var(--fill); }
 .nav a.active { background: var(--dark); color: #fff; }
-.user { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; min-width: 0; max-width: 100%; }
+.user { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; min-width: 0; max-width: 100%; }
+.user .col { display: none; }
+.user .btn.s span { display: none; }
+.user .btn.s { width: 40px; padding: 0; }
+.avatar[title] { cursor: default; }
 .user .col { min-width: 0; max-width: 220px; }
 .user .col b, .user .col .xs { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--dark); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
