@@ -192,6 +192,13 @@ textarea.input { height: auto; min-height: 120px; padding: 14px; line-height: 1.
 .stepper .now .n { background: var(--brand); color: #fff; }
 .stepper .done button { color: var(--ink); }
 .stepper .done .n { background: var(--ok-bar); color: #fff; }
+@media (max-width: 640px) {
+  .stepper { overflow: visible; gap: 6px; }
+  .stepper li { flex: none; min-width: 0; }
+  .stepper li.now { flex: 1 1 auto; }
+  .stepper button { padding: 8px; justify-content: center; }
+  .stepper li:not(.now) button span:not(.n) { display: none; }
+}
 
 /* Панель фильтров */
 .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 24px 14px; border-bottom: 1px solid var(--line); }
