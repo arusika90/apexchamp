@@ -11,6 +11,7 @@ import * as org from './views/org.js';
 import * as judge from './views/judge.js';
 import * as participant from './views/participant.js';
 import * as owner from './views/owner.js';
+import * as setup from './views/setup.js';
 
 const ROUTES = [
   { p: 'roles', v: roles.render, t: 'Выбор роли' },
@@ -112,6 +113,7 @@ const common = {
   'login-persona': (el) => {
     const role = el.dataset.role;
     if (el.dataset.stage) st().championship.stage = el.dataset.stage;
+    ui.setupStep = 0;
     if (el.dataset.preset) st().ownerPreset = el.dataset.preset;
     st().session = { role, id: el.dataset.user || null };
     ui.roleModal = false;
@@ -193,9 +195,9 @@ const FORMS = {
   },
 };
 
-Object.assign(FORMS, participant.forms, owner.forms, org.forms);
-const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
-const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes, ...participant.changes };
+Object.assign(FORMS, participant.forms, owner.forms, org.forms, setup.forms);
+const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions, ...setup.actions };
+const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes, ...participant.changes, ...setup.changes };
 const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs, 'table-search': (el) => { const id = el.dataset.table; ui.tf[id] = { ...(ui.tf[id] || { tag: '' }), q: el.value }; applyTableFilters(); } };
 
 function start() {

@@ -4,6 +4,8 @@ import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, 
 import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES, tableToolbar, inviteChip } from '../ui.js';
 import { shell, stageChip } from './common.js';
 import { THEMES, BACKGROUNDS, themeVars } from '../theme.js';
+import { render as setupView } from './setup.js';
+import { TEMPLATE_NAMES } from '../data.js';
 
 const pubBtn = () => (st().championship.stage === 'published'
   ? '<button class="btn" data-action="set-stage" data-stage="judging">Снять итоги с публикации</button>'
@@ -12,6 +14,7 @@ const pubBtn = () => (st().championship.stage === 'published'
 // ---------- Обзор ----------
 export function dashboard() {
   const s = st();
+  if (s.championship.stage === 'setup') return setupView();
   const c = s.championship;
   const pub = c.stage === 'published';
   const pr = progress();
@@ -103,10 +106,9 @@ export function settings() {
   const s = st();
   const c = s.championship;
   const field = (id, label, key, hint = '', req = false) => `<div class="field ${req ? 'req' : ''}"><label for="${id}">${label}${req ? '' : ' <span class="opt">необязательно</span>'}</label><input id="${id}" class="input" value="${esc(c[key] || '')}" data-change="champ-field" data-key="${key}">${hint ? `<span class="xs muted">${hint}</span>` : ''}</div>`;
-  const body = `
-    <div class="page-head"><div class="col" style="gap:8px"><h1>Чемпионат</h1><p class="muted">Название, сроки и логотип. Логотип виден в шапке, на публичной странице результатов и в дипломах.</p></div></div>
-    <div class="two-col">
-      <div class="main stack">
+  const tab = ui.settingsTab || 'main';
+  const tabs = [['main', 'Основное'], ['dates', 'Сроки'], ['design', 'Оформление']];
+  const content = tab === 'main' ? `<div class="main stack" style="max-width:820px">
         <section class="card stack">
           <h3>Название</h3>
           <div class="grid-2">
@@ -116,6 +118,17 @@ export function settings() {
           <div class="field"><label for="c-about">Описание для гостей <span class="opt">необязательно</span></label><textarea id="c-about" class="input" data-change="champ-field" data-key="about">${esc(c.about || '')}</textarea><span class="xs muted">Показывается на публичной странице до оглашения итогов.</span></div>
           ${field('c-contact', 'Контакт для участников', 'contact', 'Инстаграм, телеграм или почта')}
         </section>
+      </div>` : tab === 'dates' ? `<div class="main stack" style="max-width:820px">
+        <section class="card stack">
+          <h3>Сроки</h3>
+          <div class="grid-3">
+            ${field('c-submit', 'Приём работ до', 'submitUntil', '', true)}
+            ${field('c-deadline', 'Судейство до', 'deadline', '', true)}
+            ${field('c-announce', 'Оглашение', 'announce', '', true)}
+          </div>
+          <p class="xs muted">Пока это текст для участников и судей. С сервером появятся настоящие даты и автоматическое закрытие этапов.</p>
+        </section>
+      </div>` : `<div class="two-col"><div class="main stack">
         <section class="card stack">
           <div class="row-between"><h3>Оформление</h3><span class="small muted">видят судьи, участники и гости этого чемпионата</span></div>
           <div class="theme-grid">
@@ -137,17 +150,7 @@ export function settings() {
             ${c.theme?.brand || c.theme?.cta ? '<button class="btn s ghost" data-action="theme-reset">Вернуть цвета темы</button>' : ''}
           </div>
         </section>
-        <section class="card stack">
-          <h3>Сроки</h3>
-          <div class="grid-3">
-            ${field('c-submit', 'Приём работ до', 'submitUntil', '', true)}
-            ${field('c-deadline', 'Судейство до', 'deadline', '', true)}
-            ${field('c-announce', 'Оглашение', 'announce', '', true)}
-          </div>
-          <p class="xs muted">Пока это текст для участников и судей. С сервером появятся настоящие даты и автоматическое закрытие этапов.</p>
-        </section>
-      </div>
-      <aside class="side">
+      </div><aside class="side">
         <section class="card stack" style="gap:16px">
           <h3>Логотип</h3>
           <div class="row" style="gap:16px">
@@ -159,8 +162,11 @@ export function settings() {
           </div>
           <p class="xs muted">PNG, JPG, SVG или WebP, лучше квадратный. Картинка уменьшается до 256 px и хранится в этом браузере.</p>
         </section>
-      </aside>
-    </div>`;
+      </aside></div>`;
+  const body = `
+    <div class="page-head"><div class="col" style="gap:8px"><h1>Чемпионат</h1><p class="muted">Название, сроки и оформление — отдельными вкладками.</p></div></div>
+    <div class="tabs">${tabs.map(([id, label]) => `<button class="tab ${tab === id ? 'active' : ''}" data-action="settings-tab" data-tab="${id}">${label}</button>`).join('')}</div>
+    ${content}`;
   return shell('org/settings', body);
 }
 
@@ -170,7 +176,18 @@ export function nominations() {
   const body = `
     <div class="page-head">
       <div class="col" style="gap:8px"><h1>Номинации</h1><p class="muted">Критерии, максимумы баллов, судьи и ракурсы фото — отдельно для каждой номинации.</p></div>
+      <button class="btn primary" data-action="nom-new">${I.plus}<span>Добавить номинацию</span></button>
     </div>
+    ${ui.setupNomForm ? `<form class="card stack" data-form="setup-nom" style="border:2px solid var(--brand)">
+      <div class="row-between"><h3>Новая номинация</h3><button type="button" class="btn xs ghost" data-action="setup-nom-cancel">Отмена</button></div>
+      <div class="grid-3">
+        <div class="field req"><label for="sn-name">Название</label><input id="sn-name" name="name" class="input" required placeholder="Брови пудровое"></div>
+        <div class="field req"><label for="sn-block">Блок</label><select id="sn-block" name="block" class="input">${s.blocks.map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join('')}</select></div>
+        <div class="field req"><label for="sn-prefix">Номера работ</label><input id="sn-prefix" name="prefix" class="input" required placeholder="БП-1xx"></div>
+      </div>
+      <div class="field req"><label for="sn-tpl">Критерии</label><select id="sn-tpl" name="template" class="input">${Object.entries(TEMPLATE_NAMES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+      <div class="row"><button class="btn primary" type="submit">Добавить</button></div>
+    </form>` : ''}
     ${s.blocks.map((b) => `
       <section class="stack">
         <h3>${esc(b.name)}</h3>
@@ -530,6 +547,8 @@ function critName(n, critId) {
 export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
   'part-new': () => { ui.newParticipant = true; rerender(); },
+  'nom-new': () => { ui.setupNomForm = true; rerender(); },
+  'settings-tab': (el) => { ui.settingsTab = el.dataset.tab; rerender(); },
   'judge-new': () => { ui.newJudge = true; rerender(); },
   'invite-resend': (el) => { const u = resendInvite(el.dataset.role, el.dataset.id); if (u) toast(`Приглашение отправлено ещё раз: ${u.email || u.name}`); rerender(); },
   'judge-new-link': () => { ui.newJudge = true; location.hash = '#/org/judges'; },

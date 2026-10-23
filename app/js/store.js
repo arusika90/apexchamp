@@ -1,5 +1,5 @@
 // Состояние приложения. Пока бэкенда нет, всё живёт в localStorage этого браузера.
-import { seed, VERSION } from './data.js';
+import { seed, VERSION, TEMPLATES } from './data.js';
 
 const KEY = 'predragovic.state';
 let state = null;
@@ -21,6 +21,8 @@ export const ui = {
   newParticipant: false,
   newJudge: false,
   navOpen: false,
+  setupStep: 0,
+  setupNomForm: false,
   tf: {},
 };
 
@@ -78,6 +80,20 @@ export function addParticipant(d) {
     cat: d.cat || 'junior',
     free: false, gpWorks: [], initials: initialsOf(name), registered: Date.now(),
     invite: { sentAt: Date.now(), confirmed: false, resent: 0 },
+  });
+  save();
+  return id;
+}
+
+export function addNomination(d) {
+  const tpl = TEMPLATES[d.template];
+  const id = 'n' + Date.now().toString(36);
+  const blockJudges = state.nominations.find((n) => n.block === d.block)?.judgeIds || [];
+  state.nominations.push({
+    id, block: d.block, name: String(d.name).trim(), prefix: String(d.prefix).trim(), template: tpl ? d.template : 'empty',
+    criteria: tpl ? JSON.parse(JSON.stringify(tpl.criteria)) : [{ id: 'c1', group: 'Критерии', name: 'Общее впечатление', max: 10, hint: '' }],
+    penaltyMax: tpl ? tpl.penaltyMax : 10, penaltyHint: tpl ? tpl.penaltyHint : 'Нарушения регламента',
+    photos: tpl ? [...tpl.photos] : ['До', 'После'], judgeIds: [...blockJudges], confirmed: false,
   });
   save();
   return id;

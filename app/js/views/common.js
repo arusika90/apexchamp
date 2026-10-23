@@ -1,7 +1,10 @@
 // Общая шапка и каркас страниц.
-import { st, ui, sessionUser, judgeById, partById } from '../store.js';
+import { st, ui, sessionUser, judgeById, partById, roleHome } from '../store.js';
 import { esc, I } from '../ui.js';
 import { PERSONAS, currentState, phaseName, ROLE_DESC, TIPS } from '../personas.js';
+
+// Страница чемпионата (белый лейбл) или страница платформы.
+const inChamp = (role, active) => !['roles', 'design', 'owner'].includes(active) && role !== 'owner' && role !== 'designer';
 
 export const ROLE_NAME = { org: 'Организатор', judge: 'Судья', part: 'Участник', guest: 'Гость', designer: 'Дизайн-система', owner: 'Владелец платформы' };
 
@@ -15,6 +18,14 @@ const NAV = {
 };
 
 export const logoMark = () => `<span class="logo-mark">${I.lash}</span>`;
+// Бренд чемпионата: его логотип (или код в цвете темы) и название.
+export const champBrand = () => {
+  const c = st().championship;
+  return c.logo
+    ? `<img class="champ-mark" src="${c.logo}" alt=""><span class="champ-name">${esc(c.name)}</span>`
+    : `<span class="champ-name solo">${esc(c.name)}</span>`;
+};
+
 export const wordmark = () => `<span class="wordmark">apex<span>champ</span></span>`;
 
 export function header(active) {
@@ -31,8 +42,7 @@ export function header(active) {
   return `
   <header class="topbar">
     <div class="topbar-in">
-      <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
-      ${role === 'owner' || role === 'designer' ? '' : `<span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>`}
+      ${inChamp(role, active) ? `<a class="logo" href="#/${role ? roleHome(role) : 'results'}">${champBrand()}</a>` : `<a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>`}
       <nav class="nav" aria-label="Разделы">${navHtml}</nav>
       <div class="user">${nav.length ? `<button type="button" class="btn icon burger" data-action="nav-open" aria-label="Меню" aria-expanded="${ui.navOpen ? 'true' : 'false'}">${I.menu}</button>` : ''}${userHtml}</div>
     </div>
@@ -66,11 +76,10 @@ export function navDrawer(active) {
   <div class="modal-backdrop left" data-nav-backdrop>
     <div class="modal nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Меню" tabindex="-1">
       <div class="row-between" style="flex-wrap:nowrap">
-        <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
+        ${inChamp(role, active) ? `<span class="logo">${champBrand()}</span>` : `<a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>`}
         <button class="btn icon ghost" data-action="nav-close" aria-label="Закрыть">${I.plus.replace('<svg', '<svg style="transform:rotate(45deg)"')}</button>
       </div>
       ${u ? `<div class="row" style="gap:10px;padding:4px 0"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span><span class="col" style="gap:0;line-height:1.2"><b class="small">${esc(u.name)}</b><span class="xs muted">${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span></div>` : ''}
-      ${role !== 'owner' && role !== 'designer' ? `<span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}" style="align-self:flex-start">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>` : ''}
       <nav class="nav-list" aria-label="Разделы">${nav.map(([r, label]) => `<a href="#/${r}" class="${active === r ? 'active' : ''}" data-action="nav-go">${label}</a>`).join('')}</nav>
       <div class="row-between" style="border-top:1px solid var(--line);padding-top:14px;margin-top:auto">
         <button class="btn s" data-action="nav-roles">${I.swap}<span>Сменить роль</span></button>
@@ -169,6 +178,7 @@ export function roleModal() {
 export function stageChip() {
   const c = st().championship;
   if (c.stage === 'published') return '<span class="chip ok"><span class="dot"></span>Итоги опубликованы</span>';
+  if (c.stage === 'setup') return '<span class="chip"><span class="dot"></span>Настройка</span>';
   if (c.stage === 'submission') return '<span class="chip info"><span class="dot"></span>Идёт приём работ</span>';
   return '<span class="chip warn"><span class="dot"></span>Идёт судейство</span>';
 }

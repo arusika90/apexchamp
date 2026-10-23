@@ -9,7 +9,9 @@ export const VERSION = 1;
 
 const c = (id, group, name, max, hint = '') => ({ id, group, name, max, hint });
 
-const TEMPLATES = {
+export const TEMPLATE_NAMES = { lash: 'Как у наращивания ресниц', lami: 'Как у ламинирования', browColor: 'Как у бровей краской', browDu: 'Как у ДУ бровей', empty: 'С нуля: один критерий' };
+
+export const TEMPLATES = {
   lash: {
     penaltyMax: 10,
     penaltyHint: 'Склейки, отслойки, слёты — −1 за каждую; покраснение слизистой; нарушение регламента',
