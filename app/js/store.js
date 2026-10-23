@@ -17,6 +17,7 @@ export const ui = {
   editProfile: false,
   newWork: false,
   modalRole: null,
+  modalState: null,
   newParticipant: false,
   newJudge: false,
   navOpen: false,

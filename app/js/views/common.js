@@ -1,7 +1,7 @@
 // Общая шапка и каркас страниц.
 import { st, ui, sessionUser, judgeById, partById } from '../store.js';
 import { esc, I } from '../ui.js';
-import { PERSONAS, currentState, phaseName } from '../personas.js';
+import { PERSONAS, currentState, phaseName, ROLE_DESC, TIPS } from '../personas.js';
 
 export const ROLE_NAME = { org: 'Организатор', judge: 'Судья', part: 'Участник', guest: 'Гость', designer: 'Дизайн-система', owner: 'Владелец платформы' };
 
@@ -124,14 +124,26 @@ export function roleModal() {
           <span class="col grow" style="gap:1px"><b class="small">${name}${role === r ? ' <span class="chip peach" style="height:22px;font-size:11px">сейчас</span>' : ''}</b><span class="xs muted">${desc}</span></span>
           <span class="muted">${I.right}</span>
         </button>`).join('')}</div>`;
+  } else if (ui.modalState != null && PERSONAS[cur][ui.modalState]) {
+    const pr = PERSONAS[cur][ui.modalState];
+    const [, name, icon] = ROLES.find((x) => x[0] === cur) || [cur, ROLE_NAME[cur], ''];
+    const pn = personaName(cur, pr);
+    const rd = ROLE_DESC[cur] || {};
+    body = `
+      <button type="button" class="btn s ghost" style="align-self:flex-start;margin-left:-10px" data-action="modal-state" data-i="">${I.left}<span>${name}</span></button>
+      <div class="row" style="gap:10px"><span class="num-badge">${ui.modalState + 1}</span><span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span></div>
+      <div class="col" style="gap:4px"><h3>${esc(pr.label)}${pn ? ` <span class="muted" style="font-weight:600">· ${esc(pn)}</span>` : ''}</h3><span class="small muted">${esc(pr.desc)}</span></div>
+      <div class="col" style="gap:4px;padding:14px;border-radius:14px;background:var(--fill)"><b class="small">Кто такой ${name.toLowerCase()}</b><span class="small">${esc(rd.what || '')}</span><span class="small muted">${esc(rd.differs || '')}</span></div>
+      <div class="col" style="gap:4px;padding:14px;border-radius:14px;background:var(--peach)"><b class="small" style="color:var(--brand-ink)">Что посмотреть</b><span class="small">${esc(pr.look || TIPS[cur] || '')}</span></div>
+      <button type="button" class="btn primary" data-action="login-persona" data-role="${cur}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">Войти ${pn ? 'как ' + esc(pn) : ''}</button>`;
   } else {
     const [, name] = ROLES.find((x) => x[0] === cur) || [cur, ROLE_NAME[cur]];
     body = `
       <button type="button" class="btn s ghost" style="align-self:flex-start;margin-left:-10px" data-action="modal-role" data-role="">${I.left}<span>Роли</span></button>
-      <div class="col" style="gap:2px"><h3>${name}</h3><span class="small muted">Выберите состояние: до, во время или после чемпионата.</span></div>
+      <div class="col" style="gap:2px"><h3>${name}</h3><span class="small muted">Выберите состояние: до, во время или после чемпионата. Внутри — описание и что посмотреть.</span></div>
       <div class="persona-rows">${PERSONAS[cur].map((pr, i) => {
         const pn = personaName(cur, pr);
-        return `<button type="button" class="persona-row" data-action="login-persona" data-role="${cur}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">
+        return `<button type="button" class="persona-row" data-action="modal-state" data-i="${i}">
           <span class="num-badge">${i + 1}</span>
           <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
           <span class="col grow" style="gap:1px"><b class="small">${esc(pr.label)}${pn ? ` <span class="muted" style="font-weight:600">· ${esc(pn)}</span>` : ''}</b><span class="xs muted">${esc(pr.desc)}</span></span>

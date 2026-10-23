@@ -101,12 +101,13 @@ function go(hash) {
 }
 
 const common = {
-  'open-role-modal': () => { ui.roleModal = true; ui.modalRole = null; render(); },
+  'open-role-modal': () => { ui.roleModal = true; ui.modalRole = null; ui.modalState = null; render(); },
   'nav-open': () => { ui.navOpen = true; render(); document.getElementById('nav-drawer')?.focus(); },
   'nav-close': () => { ui.navOpen = false; render(); },
   'nav-go': (el) => { ui.navOpen = false; go(el.getAttribute('href')); },
   'nav-roles': () => { ui.navOpen = false; ui.roleModal = true; ui.modalRole = null; render(); },
-  'modal-role': (el) => { ui.modalRole = el.dataset.role || null; render(); },
+  'modal-role': (el) => { ui.modalRole = el.dataset.role || null; ui.modalState = null; render(); },
+  'modal-state': (el) => { ui.modalState = el.dataset.i === '' ? null : Number(el.dataset.i); render(); },
   'close-modal': () => closeModal(),
   'login-persona': (el) => {
     const role = el.dataset.role;
