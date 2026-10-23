@@ -51,7 +51,6 @@ export function footer() {
         <a href="#/roles">Роли и состояния</a>
         <a href="#/results">Результаты</a>
         <a href="#/design">Дизайн-система</a>
-        <a href="#/register">Регистрация</a>
       </nav>
       <span class="xs muted">© 2026 ApexChamp · демо, данные живут в этом браузере</span>
     </div>
