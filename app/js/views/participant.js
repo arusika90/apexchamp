@@ -3,6 +3,7 @@ import { st, ui, save, nomOf, nomById, sessionUser, addWork, removeWork, workSta
 import { result, placeOf, gapToNext, groupBreakdown, grandPrix } from '../scoring.js';
 import { esc, pct, num, I, catName, bar, placeChip, plural, toast, rerender, CATEGORIES } from '../ui.js';
 import { shell, stageChip } from './common.js';
+import { PHOTO_HINTS } from '../data.js';
 
 function comments(w) {
   const nom = nomOf(w);
@@ -61,9 +62,23 @@ function workSubmissionCard(w) {
   const photos = nom.photos;
   const have = photos.filter((p) => w.photos?.[p]).length;
   const all = have === photos.length;
-  const chips = photos.map((p) => {
-    const on = !!w.photos?.[p];
-    return `<button type="button" class="tab s ${on ? 'active' : ''}" data-action="photo-toggle" data-code="${esc(w.code)}" data-angle="${esc(p)}" aria-pressed="${on}" ${status === 'submitted' ? '' : ''}>${on ? I.check.replace('<svg', '<svg width="14" height="14"') : I.plus.replace('<svg', '<svg width="14" height="14"')}<span>${esc(p)}</span></button>`;
+  const tiles = photos.map((p) => {
+    const v = w.photos?.[p];
+    const hint = PHOTO_HINTS[p] || 'Фото по регламенту номинации.';
+    const info = `<span class="tip" data-tip="${esc(hint)}" tabindex="0" aria-label="${esc(hint)}">i</span>`;
+    if (v && typeof v === 'string' && v.startsWith('data:')) {
+      return `<div class="photo-tile has">
+        <img src="${v}" alt="${esc(p)}">
+        <div class="photo-tile-bar"><span class="small b">${esc(p)}</span>${info}</div>
+        <div class="photo-tile-actions"><label class="btn xs file-btn">Заменить<input type="file" accept="image/*" data-change="photo-file" data-code="${esc(w.code)}" data-angle="${esc(p)}"></label><button type="button" class="btn xs ghost" data-action="photo-remove" data-code="${esc(w.code)}" data-angle="${esc(p)}">Убрать</button></div>
+      </div>`;
+    }
+    return `<label class="photo-tile empty">
+      <input type="file" accept="image/*" data-change="photo-file" data-code="${esc(w.code)}" data-angle="${esc(p)}">
+      <span class="photo-plus">${I.plus}</span>
+      <div class="photo-tile-bar"><span class="small b">${esc(p)}</span>${info}</div>
+      <span class="xs muted" style="padding:0 10px 10px">нажмите, чтобы загрузить</span>
+    </label>`;
   }).join('');
   const statusChip = status === 'submitted'
     ? `<span class="chip ok">${I.check.replace('<svg', '<svg width="14" height="14"')}Подана</span>`
@@ -79,8 +94,8 @@ function workSubmissionCard(w) {
       </div>
       <div class="col" style="gap:8px">
         <span class="label">Фото по регламенту · ${have} из ${photos.length}</span>
-        <div class="tabs">${chips}</div>
-        <span class="xs muted">${status === 'submitted' ? 'Фото можно заменить до закрытия приёма.' : 'Нажмите на ракурс, чтобы загрузить фото. В демо загрузка эмулируется.'}</span>
+        <div class="photo-grid">${tiles}</div>
+        <div class="row-between"><span class="xs muted">${status === 'submitted' ? 'Фото можно заменить до закрытия приёма.' : 'Наведите на (i), чтобы узнать, как снимать ракурс. Фото уменьшаются до 1200 px.'}</span>${status !== 'submitted' && !all ? `<button type="button" class="btn xs ghost" data-action="photo-demo" data-code="${esc(w.code)}">Демо: подставить образцы</button>` : ''}</div>
       </div>
       <div class="row" style="border-top:1px solid var(--line);padding-top:14px">
         ${status === 'submitted'
@@ -262,12 +277,21 @@ export const actions = {
   diploma: () => toast('PDF-дипломы появятся вместе с сервером — сейчас это демо'),
   'work-new': () => { ui.newWork = true; rerender(); },
   'work-cancel': () => { ui.newWork = false; rerender(); },
-  'photo-toggle': (el) => {
+  'photo-remove': (el) => {
     const w = myWork(el.dataset.code);
     if (!w) return;
-    w.photos = w.photos || {};
-    w.photos[el.dataset.angle] = !w.photos[el.dataset.angle];
+    delete w.photos[el.dataset.angle];
     save();
+    rerender();
+  },
+  'photo-demo': (el) => {
+    const w = myWork(el.dataset.code);
+    if (!w) return;
+    const nom = nomOf(w);
+    w.photos = w.photos || {};
+    nom.photos.forEach((p, i) => { if (!w.photos[p]) w.photos[p] = samplePhoto(p, i); });
+    save();
+    toast('Образцы подставлены, замените их настоящими фото');
     rerender();
   },
   'work-send': (el) => {
@@ -307,6 +331,52 @@ export const actions = {
     rerender();
   },
   'gp-withdraw': () => { const me = sessionUser(); me.gpWorks = []; save(); toast('Заявка отозвана'); rerender(); },
+};
+
+// Уменьшает картинку до 1200 px по длинной стороне и отдаёт data URL.
+function fitPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1200 / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Это не картинка')); };
+    img.src = url;
+  });
+}
+
+// Образец для демо: мягкий цветной прямоугольник с подписью ракурса.
+function samplePhoto(label, i) {
+  const cv = document.createElement('canvas');
+  cv.width = 600; cv.height = 450;
+  const x = cv.getContext('2d');
+  const hues = ['#FACFBC', '#FCC379', '#FDEEE7', '#F1E3D3', '#FFE2E9', '#E9E9E9'];
+  x.fillStyle = hues[i % hues.length]; x.fillRect(0, 0, 600, 450);
+  x.fillStyle = 'rgba(0,0,0,.45)'; x.font = 'bold 36px Manrope, sans-serif'; x.textAlign = 'center';
+  x.fillText(label, 300, 235);
+  x.font = '20px Manrope, sans-serif'; x.fillText('образец', 300, 270);
+  return cv.toDataURL('image/jpeg', 0.7);
+}
+
+export const changes = {
+  'photo-file': async (el) => {
+    const w = myWork(el.dataset.code);
+    const file = el.files && el.files[0];
+    if (!w || !file) return;
+    try {
+      w.photos = w.photos || {};
+      w.photos[el.dataset.angle] = await fitPhoto(file);
+      save();
+      toast(`Фото «${el.dataset.angle}» загружено`);
+      rerender();
+    } catch (e) { toast(e.message || 'Не удалось загрузить фото'); }
+  },
 };
 
 export const forms = {

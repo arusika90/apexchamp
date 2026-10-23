@@ -185,7 +185,7 @@ const FORMS = {
 
 Object.assign(FORMS, participant.forms, owner.forms, org.forms);
 const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
-const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes };
+const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes, ...participant.changes };
 const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs, 'table-search': (el) => { const id = el.dataset.table; ui.tf[id] = { ...(ui.tf[id] || { tag: '' }), q: el.value }; applyTableFilters(); } };
 
 function start() {

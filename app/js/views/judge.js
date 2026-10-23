@@ -173,11 +173,13 @@ export function sheet(code) {
     <div class="two-col">
       <aside class="side" style="flex:1 1 380px">
         <section class="card stack" style="padding:16px">
-          <div class="photo big">${I.photo}<b style="color:var(--ink)">${esc(photos[cur] || 'Фото')}</b><span>Нажмите, чтобы открыть крупно</span></div>
+          ${(() => { const v = w.photos?.[photos[cur]]; const real = v && typeof v === 'string' && v.startsWith('data:'); return real
+            ? `<a class="photo big" style="background:#000 url('${v}') center/contain no-repeat;color:#fff" href="${v}" target="_blank" rel="noopener" aria-label="Открыть фото крупно"></a>`
+            : `<div class="photo big">${I.photo}<b style="color:var(--ink)">${esc(photos[cur] || 'Фото')}</b><span>${w.photos && Object.keys(w.photos).length ? 'Этот ракурс не загружен' : 'Фото не загружены (демо)'}</span></div>`; })()}
           <div class="thumbs" style="grid-template-columns:repeat(${Math.min(photos.length, 6)},minmax(0,1fr))">
-            ${photos.map((p, i) => `<button type="button" class="thumb ${i === cur ? 'on' : ''}" data-action="photo" data-i="${i}">${esc(p)}</button>`).join('')}
+            ${photos.map((p, i) => { const v = w.photos?.[p]; const real = v && typeof v === 'string' && v.startsWith('data:'); return `<button type="button" class="thumb ${i === cur ? 'on' : ''}" data-action="photo" data-i="${i}" style="${real ? `background:url('${v}') center/cover` : ''}" title="${esc(p)}">${real ? '' : esc(p)}</button>`; }).join('')}
           </div>
-          <div class="row-between small muted"><span>Ракурсы по регламенту: ${photos.length} из ${photos.length}</span></div>
+          <div class="row-between small muted"><span>${esc(photos[cur] || '')} · ракурсов загружено ${photos.filter((p) => { const v = w.photos?.[p]; return v && typeof v === 'string' && v.startsWith('data:'); }).length} из ${photos.length}</span></div>
         </section>
         <section class="card lemon pad-s col">
           <b class="small">Нет нужного ракурса?</b>

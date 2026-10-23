@@ -191,6 +191,21 @@ textarea.input { height: auto; min-height: 120px; padding: 14px; line-height: 1.
 .thumb { height: 60px; border-radius: 10px; border: 2px solid transparent; background: var(--fill-2); font-size: 12px; font-weight: 700; cursor: pointer; color: var(--ink); }
 .thumb.on { border-color: var(--brand); }
 
+/* Фото по ракурсам */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.photo-tile { position: relative; display: flex; flex-direction: column; border-radius: 14px; background: var(--fill); overflow: hidden; min-height: 150px; }
+.photo-tile.empty { cursor: pointer; border: 1.5px dashed var(--line-2); align-items: center; justify-content: center; gap: 6px; text-align: center; }
+.photo-tile.empty:hover { border-color: var(--brand); background: var(--peach); }
+.photo-tile.empty input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.photo-plus { width: 36px; height: 36px; border-radius: 50%; background: var(--card); color: var(--brand); display: inline-flex; align-items: center; justify-content: center; margin-top: 10px; }
+.photo-tile img { width: 100%; height: 110px; object-fit: cover; display: block; }
+.photo-tile-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px 4px; }
+.photo-tile.empty .photo-tile-bar { justify-content: center; }
+.photo-tile-actions { display: flex; gap: 6px; padding: 0 10px 10px; }
+.tip { width: 18px; height: 18px; border-radius: 50%; background: var(--dark); color: #fff; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; cursor: help; position: relative; flex: none; font-style: italic; }
+.tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); right: -6px; width: 220px; padding: 10px 12px; border-radius: 10px; background: var(--dark); color: #fff; font-size: 12px; font-weight: 500; font-style: normal; line-height: 1.4; text-align: left; opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity .12s, transform .12s; z-index: 5; }
+.tip:hover::after, .tip:focus::after { opacity: 1; transform: none; }
+
 /* Нижняя панель */
 .actionbar { position: sticky; bottom: 0; z-index: 10; background: var(--card); border-top: 1px solid var(--line); margin-top: auto; }
 .actionbar-in { max-width: var(--page-w); margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
