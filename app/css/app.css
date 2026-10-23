@@ -210,7 +210,7 @@ body.modal-open { overflow: hidden; }
 .role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .role-grid { grid-template-columns: minmax(0, 1fr); } }
-.role { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: var(--r-l); background: var(--card); border: 2px solid transparent; cursor: pointer; text-align: left; }
+.role { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: var(--r-l); background: var(--card); border: 2px solid transparent; text-align: left; }
 .role:hover { border-color: var(--peach-2); }
 .role.active { border-color: var(--brand); }
 .role .icon { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; }
@@ -232,8 +232,10 @@ body.modal-open { overflow: hidden; }
 .chip.phase-before { background: var(--fill-2); color: var(--ink-2); }
 .chip.phase-during { background: var(--lemon); color: var(--warn); }
 .chip.phase-after { background: var(--ok-bg); color: var(--ok); }
-.role .persona { background: var(--fill); }
-.role .persona:hover { background: var(--peach); }
+.role .persona { background: var(--card); border: 1.5px solid var(--line-2); transition: border-color .12s, transform .08s, box-shadow .12s; }
+.role .persona:hover { border-color: var(--brand); background: var(--card); box-shadow: var(--shadow); transform: translateY(-1px); }
+.role .persona:hover .persona-go { background: var(--cta); color: var(--cta-ink); }
+.persona-go { display: inline-flex; align-items: center; gap: 4px; flex: none; height: 32px; padding: 0 10px 0 12px; border-radius: 10px; background: var(--fill); font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; }
 
 /* Темы чемпионата */
 .theme-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
