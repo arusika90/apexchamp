@@ -1,0 +1,57 @@
+/* Дизайн-токены платформы «Предрагович».
+   Структура и ритм — как у Т-Банка (белые карточки, чёрные активные вкладки, один акцент на экране),
+   цвет — живой, от elementaree: оранжевый бренд, жёлтая кнопка, персиковые подложки. */
+:root {
+  --font: 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Бренд и действие */
+  --brand: #ED5C1E;        /* Persimmon — логотип, hero, активные состояния */
+  --brand-2: #FF6827;      /* ярче — hover ссылок, иконки */
+  --brand-ink: #BE2E00;    /* текст на персиковом */
+  --cta: #FFDB19;          /* главная кнопка */
+  --cta-hover: #F2CE00;
+  --cta-ink: #1F1F1F;
+
+  /* Тёплые подложки */
+  --peach: #FDEEE7;
+  --peach-2: #FACFBC;
+  --cloudberry: #FCC379;
+  --lemon: #FFF5C0;
+
+  /* Текст */
+  --ink: #1F1F1F;
+  --ink-2: #535353;
+  --muted: #747474;
+  --hint: #9C9C9C;
+
+  /* Поверхности */
+  --bg: #F8F8F8;
+  --card: #FFFFFF;
+  --fill: #F1F1F1;
+  --fill-2: #E9E9E9;
+  --line: #EDEDED;
+  --line-2: #E1E1E1;
+  --dark: #1F1F1F;
+
+  /* Статусы */
+  --ok: #1E9E5A;  --ok-bg: #E7F6EC;  --ok-bar: #4FBC0D;
+  --warn: #B07A00; --warn-bg: #FFF5C0; --warn-bar: #E0A800;
+  --danger: #D75757; --danger-bg: #FDE8E8;
+  --info: #0077FF; --info-bg: #E8F1FF;
+
+  /* Призовые места */
+  --place-1: #FFDB19;
+  --place-2: #E9E9E9;
+  --place-3: #FCC379;
+
+  /* Радиусы, тени, отступы */
+  --r-s: 10px; --r-m: 14px; --r-l: 20px; --r-xl: 28px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, .05);
+  --shadow-2: 0 8px 28px rgba(0, 0, 0, .08);
+  --gap: 16px;
+  --page-w: 1216px;
+
+  /* Типографика */
+  --fs-xs: 12px; --fs-s: 13px; --fs-m: 15px; --fs-l: 17px;
+  --fs-h3: 20px; --fs-h2: 24px; --fs-h1: 32px; --fs-num: 36px;
+}

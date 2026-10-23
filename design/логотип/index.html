@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApexChamp — три галочки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --brand:#ED5C1E; --cta:#FFDB19; --ink:#1F1F1F; --muted:#747474; --bg:#F8F8F8; --peach:#FDEEE7; --line:#EDEDED; --halo:#fff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Manrope', system-ui, sans-serif; }
+  .page { max-width: 1216px; margin: 0 auto; padding: 32px 24px 80px; display: flex; flex-direction: column; gap: 24px; }
+  h1 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.5px; }
+  h2 { margin: 0; font-size: 20px; font-weight: 800; }
+  p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .card { background: #fff; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 22px; }
+  .row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-end; }
+  .cell { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .cell .cap { font-size: 12px; font-weight: 700; color: var(--muted); text-align: center; }
+  .wm { display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+  .wm .t { font-weight: 800; letter-spacing: -1.4px; line-height: 1; font-size: 48px; text-transform: lowercase; }
+  .wm .t .a { color: var(--brand); }
+  .wm.s .t { font-size: 28px; letter-spacing: -.8px; } .wm.s { gap: 8px; }
+  .wm.light .t { color: #fff; } .wm.light .t .a { color: var(--cta); }
+  .tile { display: inline-flex; align-items: center; justify-content: center; }
+  .sep { height: 1px; background: var(--line); }
+  .band { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
+  .band > div { border-radius: 20px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div>
+    <h1>ApexChamp — три галочки</h1>
+    <p>Ваши три галочки, нарисованные в векторе и покрученные: поворот на 180° как на игральной карте, зеркало по вертикали, пара «бровь над галочкой», иконка в квадрате и шапка приложения. В повороте галочка становится бровью сама собой.</p>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <!-- А · каллиграфическая: толстый короткий штрих, длинный штрих сужается к кончику -->
+      <symbol id="ckA" viewBox="0 0 64 64">
+        <path fill="currentColor" d="M9 31 C7 27 12 25 18 28 C23 31 26.5 35.5 29.5 40.5 C37.5 29.5 47 18.5 57 10 C59 8.3 61.3 10.6 59.6 12.6 C49.5 22.5 39.5 35 32.5 50.5 C31.4 53 27.6 53 26.4 50.5 C22 43.5 16 38.5 9.5 37.5 C6.6 37 7 33.3 9 31 Z"/>
+      </symbol>
+      <!-- Б · в рамке: скруглённый квадрат контуром, галочка внутри -->
+      <symbol id="ckB" viewBox="0 0 64 64">
+        <rect x="7" y="7" width="50" height="50" rx="13" fill="none" stroke="currentColor" stroke-width="6"/>
+        <path d="M20 33 L29 42 L45 23" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <!-- В · выходит за рамку: рамка разомкнута в правом верхнем углу, галочка с обводкой -->
+      <symbol id="ckC" viewBox="0 0 64 64">
+        <path d="M38 12 H16 a8 8 0 0 0 -8 8 V48 a8 8 0 0 0 8 8 H44 a8 8 0 0 0 8 -8 V31" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <path d="M17 34 L30 47 L60 12" fill="none" stroke="var(--halo)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17 34 L30 47 L60 12" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <!-- Пары в столбик: повёрнутая сверху, обычная снизу -->
+      <symbol id="pairA" viewBox="0 0 64 112"><use href="#ckA" transform="rotate(180 32 32)"/><use href="#ckA" y="48"/></symbol>
+      <symbol id="pairB" viewBox="0 0 64 120"><use href="#ckB" transform="rotate(180 32 32)"/><use href="#ckB" y="56"/></symbol>
+      <symbol id="pairC" viewBox="0 0 64 124"><use href="#ckC" transform="rotate(180 32 32)"/><use href="#ckC" y="60"/></symbol>
+      <!-- Пары по диагонали в квадрате, как индексы на карте -->
+      <symbol id="sqA" viewBox="0 0 64 64"><use href="#ckA" transform="translate(1 0) scale(.58) rotate(180 32 32)"/><use href="#ckA" transform="translate(26 27) scale(.58)"/></symbol>
+      <symbol id="sqB" viewBox="0 0 64 64"><use href="#ckB" transform="translate(2 2) scale(.5) rotate(180 32 32)"/><use href="#ckB" transform="translate(30 30) scale(.5)"/></symbol>
+      <symbol id="sqC" viewBox="0 0 64 64"><use href="#ckC" transform="translate(0 0) scale(.52) rotate(180 32 32)"/><use href="#ckC" transform="translate(30 30) scale(.52)"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- А -->
+  <div class="card">
+    <div><h2>А · Каллиграфическая</h2><p>Толстый короткий штрих и длинный, сужающийся к кончику. В повороте толстая часть становится головкой брови, тонкий кончик — хвостом.</p></div>
+    <div class="row">
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckA"/></svg><span class="cap">галочка</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckA" transform="rotate(180 32 32)"/></svg><span class="cap">поворот 180°</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckA" transform="scale(1 -1) translate(0 -64)"/></svg><span class="cap">зеркало по вертикали</span></div>
+      <div class="cell"><svg viewBox="0 0 64 112" style="height:200px;color:var(--brand)"><use href="#pairA"/></svg><span class="cap">пара в столбик</span></div>
+      <div class="cell"><div class="row" style="gap:12px;align-items:center"><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--brand);color:#fff"><use href="#sqA"/></svg><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--cta);color:var(--ink)"><use href="#sqA"/></svg><svg viewBox="0 0 64 64" style="width:32px;height:32px;border-radius:9px;background:var(--brand);color:#fff"><use href="#sqA"/></svg></div><span class="cap">иконка и фавикон</span></div>
+    </div>
+    <div class="sep"></div>
+    <div class="band">
+      <div style="background:var(--bg)"><span class="wm"><svg viewBox="0 0 64 112" style="height:60px;width:34px;color:var(--brand)"><use href="#pairA"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 112" style="height:32px;width:18px;color:var(--brand)"><use href="#pairA"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--bg)"><span class="wm"><svg viewBox="0 0 64 64" style="width:50px;height:50px;border-radius:14px;background:var(--brand);color:#fff;flex:none"><use href="#sqA"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 64" style="width:28px;height:28px;border-radius:8px;background:var(--brand);color:#fff;flex:none"><use href="#sqA"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--brand)"><span class="wm light"><svg viewBox="0 0 64 112" style="height:60px;width:34px;color:var(--cta)"><use href="#pairA"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+    </div>
+  </div>
+
+  <!-- Б -->
+  <div class="card">
+    <div><h2>Б · В рамке</h2><p>Галочка внутри скруглённого квадрата, контуром. Повёрнутый квадрат — тот же квадрат, поэтому пара выглядит как две одинаковые плитки с разными знаками.</p></div>
+    <div class="row">
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckB"/></svg><span class="cap">галочка</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckB" transform="rotate(180 32 32)"/></svg><span class="cap">поворот 180°</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--brand)"><use href="#ckB" transform="scale(1 -1) translate(0 -64)"/></svg><span class="cap">зеркало по вертикали</span></div>
+      <div class="cell"><svg viewBox="0 0 64 120" style="height:200px;color:var(--brand)"><use href="#pairB"/></svg><span class="cap">пара в столбик</span></div>
+      <div class="cell"><div class="row" style="gap:12px;align-items:center"><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--brand);color:#fff"><use href="#sqB"/></svg><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--cta);color:var(--ink)"><use href="#sqB"/></svg><svg viewBox="0 0 64 64" style="width:32px;height:32px;border-radius:9px;background:var(--brand);color:#fff"><use href="#sqB"/></svg></div><span class="cap">иконка и фавикон</span></div>
+    </div>
+    <div class="sep"></div>
+    <div class="band">
+      <div style="background:var(--bg)"><span class="wm"><svg viewBox="0 0 64 120" style="height:60px;width:32px;color:var(--brand)"><use href="#pairB"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 120" style="height:32px;width:17px;color:var(--brand)"><use href="#pairB"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--bg)"><span class="wm"><svg viewBox="0 0 64 64" style="width:50px;height:50px;color:var(--brand);flex:none"><use href="#ckB"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 64" style="width:28px;height:28px;color:var(--brand);flex:none"><use href="#ckB"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--brand)"><span class="wm light"><svg viewBox="0 0 64 120" style="height:60px;width:32px;color:var(--cta)"><use href="#pairB"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+    </div>
+  </div>
+
+  <!-- В -->
+  <div class="card">
+    <div><h2>В · Выходит за рамку</h2><p>Жирная галочка вырывается из квадрата через разомкнутый угол. В повороте угол открывается слева внизу, и пара читается как две карты.</p></div>
+    <div class="row">
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--ink)"><use href="#ckC"/></svg><span class="cap">галочка</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--ink)"><use href="#ckC" transform="rotate(180 32 32)"/></svg><span class="cap">поворот 180°</span></div>
+      <div class="cell"><svg viewBox="0 0 64 64" style="width:130px;height:130px;color:var(--ink)"><use href="#ckC" transform="scale(1 -1) translate(0 -64)"/></svg><span class="cap">зеркало по вертикали</span></div>
+      <div class="cell"><svg viewBox="0 0 64 124" style="height:200px;color:var(--brand)"><use href="#pairC"/></svg><span class="cap">пара в столбик</span></div>
+      <div class="cell"><div class="row" style="gap:12px;align-items:center"><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--brand);color:#fff;--halo:#ED5C1E"><use href="#sqC"/></svg><svg viewBox="0 0 64 64" style="width:110px;height:110px;border-radius:28px;background:var(--cta);color:var(--ink);--halo:#FFDB19"><use href="#sqC"/></svg><svg viewBox="0 0 64 64" style="width:32px;height:32px;border-radius:9px;background:var(--brand);color:#fff;--halo:#ED5C1E"><use href="#sqC"/></svg></div><span class="cap">иконка и фавикон</span></div>
+    </div>
+    <div class="sep"></div>
+    <div class="band">
+      <div style="background:var(--bg);--halo:#F8F8F8"><span class="wm"><svg viewBox="0 0 64 124" style="height:60px;width:31px;color:var(--brand)"><use href="#pairC"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 124" style="height:32px;width:17px;color:var(--brand)"><use href="#pairC"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--bg);--halo:#F8F8F8"><span class="wm"><svg viewBox="0 0 64 64" style="width:54px;height:54px;color:var(--brand);flex:none"><use href="#ckC"/></svg><span class="t">apex<span class="a">champ</span></span></span><span class="wm s"><svg viewBox="0 0 64 64" style="width:30px;height:30px;color:var(--brand);flex:none"><use href="#ckC"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+      <div style="background:var(--brand);--halo:#ED5C1E"><span class="wm light"><svg viewBox="0 0 64 124" style="height:60px;width:31px;color:var(--cta)"><use href="#pairC"/></svg><span class="t">apex<span class="a">champ</span></span></span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

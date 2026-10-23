@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Публичные результаты чемпионата</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F7F8;font-family:'Inter',system-ui,-apple-system,sans-serif;color:#1F1F1F;-webkit-font-smoothing:antialiased}
+a{color:#336FEE;text-decoration:none}a:hover{color:#1F4FBF}
+.row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;padding:14px 24px;border-top:1px solid #F0F2F4}
+.hd{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:12px;padding:8px 24px;font-size:12px;color:#6F7883;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.num{font-size:17px;font-weight:800;letter-spacing:-.2px}
+.cat{display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:8px;background:#EEF0F2;font-size:13px;font-weight:600}
+.pct{font-size:17px;font-weight:700}
+.pl{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:10px;font-size:14px;font-weight:700}
+.pl2{background:#E6E8EB;color:#1F1F1F}
+.pl3{background:#F3E8DA;color:#6B4A1E}
+.pl0{background:transparent;color:#9AA3AD;font-weight:500}
+</style>
+</helmet>
+<div style="min-height: 100%; background: #F6F7F8; font-family: 'Inter', system-ui, sans-serif; color: #1F1F1F;">
+
+  <!-- Публичная шапка: бренд чемпионата, не платформы -->
+  <header style="background: #FFFFFF; border-bottom: 1px solid #E6E8EB;">
+    <div style="max-width: 1216px; margin: 0 auto; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 14px; background: #E9ECEF; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6F7883; font-weight: 600; text-align: center; line-height: 1.2;">лого<br>чемпионата</div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span style="font-size: 24px; font-weight: 800; letter-spacing: -0.4px;">Lash &amp; Brow Cup 2026</span>
+          <span style="font-size: 14px; color: #6F7883;">Результаты объявлены 30 октября 2026</span>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <label for="search" style="position: absolute; left: -9999px;">Поиск по номеру работы</label>
+        <input id="search" type="search" placeholder="Номер работы, например ВК-303" style="width: 300px; max-width: 100%; height: 48px; padding: 0 16px; border-radius: 14px; border: 1px solid #E6E8EB; background: #F6F7F8; font-size: 15px; font-family: inherit; color: #1F1F1F;">
+        <a href="Participant.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 18px; border-radius: 14px; background: #EEF0F2; color: #1F1F1F; font-size: 15px; font-weight: 600;">Войти в кабинет</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1216px; margin: 0 auto; padding: 28px 32px 48px; display: flex; flex-direction: column; gap: 20px;">
+
+    <!-- Блоки и номинации -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button type="button" style="height: 44px; padding: 0 18px; border-radius: 12px; border: 0; background: #1F1F1F; color: #FFFFFF; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">Наращивание ресниц</button>
+        <button type="button" style="height: 44px; padding: 0 18px; border-radius: 12px; border: 0; background: #FFFFFF; color: #1F1F1F; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">Ламинирование</button>
+        <button type="button" style="height: 44px; padding: 0 18px; border-radius: 12px; border: 0; background: #FFFFFF; color: #1F1F1F; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">Брови</button>
+        <button type="button" style="height: 44px; padding: 0 18px; border-radius: 12px; border: 0; background: #FFFFFF; color: #1F1F1F; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">Гран-при и спец-призы</button>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid #1F1F1F; background: #FFFFFF; color: #1F1F1F; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Классика</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">2-5 D</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Мокрый эффект</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Мужское</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">L|M</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Only black</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Цветное</button>
+        <button type="button" style="height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid transparent; background: #FFFFFF; color: #6F7883; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">Образ</button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+
+        <!-- Классика -->
+        <section style="background: #FFFFFF; border-radius: 20px; padding: 8px 0 8px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 16px 24px 12px; gap: 16px; flex-wrap: wrap;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700;">Классика <span style="color: #6F7883; font-weight: 500;">· 4 работы</span></h2>
+            <span style="font-size: 13px; color: #6F7883;">Места считаются внутри категории</span>
+          </div>
+          <div class="hd"><div>Номер работы</div><div>Категория</div><div>Средний балл</div><div>Место</div></div>
+          <div class="row"><div class="num">107</div><div><span class="cat">мастер</span></div><div class="pct">81,00 %</div><div><span class="pl" style="background: {{accent}}; color: #1F1F1F;">1 место</span></div></div>
+          <div class="row"><div class="num">109</div><div><span class="cat">юниор</span></div><div class="pct">70,83 %</div><div><span class="pl" style="background: {{accent}}; color: #1F1F1F;">1 место</span></div></div>
+          <div class="row"><div class="num">101</div><div><span class="cat">юниор</span></div><div class="pct">69,58 %</div><div><span class="pl pl2">2 место</span></div></div>
+          <div class="row"><div class="num">108</div><div><span class="cat">эксперт</span></div><div class="pct">76,00 %</div><div><span class="pl pl3">3 место</span></div></div>
+        </section>
+
+        <!-- 2-5 D -->
+        <section style="background: #FFFFFF; border-radius: 20px; padding: 8px 0 8px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 16px 24px 12px; gap: 16px; flex-wrap: wrap;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700;">2-5 D <span style="color: #6F7883; font-weight: 500;">· 6 работ</span></h2>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #6F7883;">Спец-приз судьи: 208, 210</span>
+          </div>
+          <div class="hd"><div>Номер работы</div><div>Категория</div><div>Средний балл</div><div>Место</div></div>
+          <div class="row"><div class="num">207</div><div><span class="cat">эксперт</span></div><div class="pct">86,16 %</div><div><span class="pl" style="background: {{accent}}; color: #1F1F1F;">1 место</span></div></div>
+          <div class="row"><div class="num">208</div><div><span class="cat">эксперт</span></div><div class="pct">82,16 %</div><div><span class="pl pl2">2 место</span></div></div>
+          <div class="row"><div class="num">210</div><div><span class="cat">эксперт</span></div><div class="pct">79,66 %</div><div><span class="pl pl3">3 место</span></div></div>
+          <div class="row"><div class="num">209</div><div><span class="cat">эксперт</span></div><div class="pct">70,66 %</div><div><span class="pl pl0">без места</span></div></div>
+          <div class="row"><div class="num">206</div><div><span class="cat">мастер</span></div><div class="pct">75,33 %</div><div><span class="pl pl2">2 место</span></div></div>
+          <div class="row"><div class="num">202</div><div><span class="cat">юниор</span></div><div class="pct">70,25 %</div><div><span class="pl" style="background: {{accent}}; color: #1F1F1F;">1 место</span></div></div>
+        </section>
+      </div>
+
+      <aside style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+
+        <section style="background: #1F1F1F; color: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 700;">Гран-при</h2>
+            <span style="font-size: 13px; color: #B6BCC4;">сумма трёх работ</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: {{accent}}; color: #1F1F1F;">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">Гран-при</span>
+            <span style="font-size: 20px; font-weight: 800;">Юлия Ф. <span style="font-weight: 500; font-size: 14px;">@esthetics_of…</span></span>
+            <span style="font-size: 14px;">LM-108 · LM-203 · LM-402 → <strong>256,49</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px;"><span><strong>Вице гран-при</strong> · Мелитта Г.</span><span style="color: #B6BCC4;">244,82</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px;"><span><strong>Вице гран-при</strong> · Карина М.</span><span style="color: #B6BCC4;">232,58</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: #B6BCC4;"><span>Александра А.</span><span>230,87</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: #B6BCC4;"><span>Екатерина Д.</span><span>208,24</span></div>
+        </section>
+
+        <section style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+          <h2 style="margin: 0; font-size: 20px; font-weight: 700;">Спец-призы</h2>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 10px 0; border-top: 1px solid #F0F2F4;"><span><strong>108</strong> · Классика</span><span style="color: #6F7883;">приз судьи Анастасии Дж.</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 10px 0; border-top: 1px solid #F0F2F4;"><span><strong>210</strong> · 2-5 D</span><span style="color: #6F7883;">приз судьи Елены А.</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 10px 0; border-top: 1px solid #F0F2F4;"><span><strong>ВК-302</strong> · Брови краска</span><span style="color: #6F7883;">приз судьи Павлины С.</span></div>
+          <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; padding: 10px 0; border-top: 1px solid #F0F2F4;"><span><strong>LM-103</strong> · Ламинирование</span><span style="color: #6F7883;">приз организатора</span></div>
+          <a href="Results.dc.html" style="font-size: 14px; font-weight: 600;">Все 9 спец-призов</a>
+        </section>
+
+        <section style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700;">Как считаются места</h2>
+          <div style="font-size: 14px; color: #6F7883; line-height: 1.5;">Средний балл — это сумма баллов всех судей, делённая на максимум. Место даётся, если балл не ниже порога категории. Место может остаться пустым.</div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr)); gap: 6px; font-size: 13px;">
+            <div style="color: #6F7883; font-weight: 600;"></div><div style="color: #6F7883; font-weight: 600;">1</div><div style="color: #6F7883; font-weight: 600;">2</div><div style="color: #6F7883; font-weight: 600;">3</div>
+            <div style="font-weight: 600;">Юниор</div><div>70 %</div><div>65 %</div><div>60 %</div>
+            <div style="font-weight: 600;">Мастер</div><div>80 %</div><div>70 %</div><div>65 %</div>
+            <div style="font-weight: 600;">Эксперт</div><div>85 %</div><div>80 %</div><div>72 %</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <footer style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 8px; font-size: 13px; color: #6F7883;">
+      <span>Имена участников в таблицах не публикуются. Свои оценки и комментарии судей смотрите в кабинете.</span>
+      <span>Работает на платформе <strong style="color: #1F1F1F;">Предрагович</strong></span>
+    </footer>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#FFDD2D","options":["#FFDD2D","#ED5C1E","#336FEE","#1F1F1F"],"section":"Стиль"},"$preview":{"width":1280,"height":1160}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#FFDD2D' };
+  }
+}
+</script>
+</body>
+</html>

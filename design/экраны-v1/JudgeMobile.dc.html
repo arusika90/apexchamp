@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Судья — ведомость на телефоне</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F7F8;font-family:'Inter',system-ui,-apple-system,sans-serif;color:#1F1F1F;-webkit-font-smoothing:antialiased}
+a{color:#336FEE;text-decoration:none}a:hover{color:#1F4FBF}
+.p{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;background:#EEF0F2;font-weight:600;font-size:16px;border:0;color:#1F1F1F;font-family:inherit;cursor:pointer}
+.p.on{background:#1F1F1F;color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F6F7F8; font-family: 'Inter', system-ui, sans-serif; color: #1F1F1F; display: flex; flex-direction: column; overflow: hidden;">
+
+  <!-- Верхняя панель -->
+  <div style="background: #FFFFFF; padding: 14px 16px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #E6E8EB; flex: 0 0 auto;">
+    <a href="JudgeList.dc.html" aria-label="Назад к списку" style="width: 40px; height: 40px; border-radius: 12px; background: #EEF0F2; display: inline-flex; align-items: center; justify-content: center;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0;">
+      <span style="font-size: 17px; font-weight: 800; letter-spacing: -0.2px;">ВК-303</span>
+      <span style="font-size: 12px; color: #6F7883;">Брови краска · юниор · 3 из 3</span>
+    </div>
+    <span style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E9E5A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </span>
+  </div>
+
+  <!-- Прокручиваемая часть -->
+  <div style="flex: 1 1 auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 0;">
+
+    <!-- Фото -->
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 10px; display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto;">
+      <div style="height: 190px; border-radius: 12px; background: #E9ECEF; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; color: #6F7883;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9AA3AD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <span style="font-size: 13px; font-weight: 600; color: #1F1F1F;">После · обе брови</span>
+        <span style="font-size: 12px;">Свайп — следующий ракурс, тап — крупно</span>
+      </div>
+      <div style="display: flex; gap: 6px; justify-content: center;">
+        <span style="width: 18px; height: 6px; border-radius: 3px; background: #1F1F1F;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 3px; background: #C9CED4;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 3px; background: #C9CED4;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 3px; background: #C9CED4;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 3px; background: #C9CED4;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 3px; background: #C9CED4;"></span>
+      </div>
+    </div>
+
+    <!-- Прогресс по критериям -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px; flex: 0 0 auto;">
+      <span style="font-size: 13px; font-weight: 700; color: #6F7883; text-transform: uppercase; letter-spacing: 0.4px;">Сложность модели</span>
+      <span style="font-size: 13px; color: #6F7883;">критерий 3 из 16</span>
+    </div>
+
+    <!-- Критерий -->
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 0 0 auto;">
+      <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+        <div style="min-width: 0;">
+          <div style="font-size: 16px; font-weight: 700;">Густота волосков</div>
+          <div style="font-size: 13px; color: #6F7883; margin-top: 2px;">чем гуще, тем выше балл</div>
+        </div>
+        <div style="font-size: 16px; font-weight: 700; white-space: nowrap;">3 <span style="color: #6F7883; font-weight: 500;">из 5</span></div>
+      </div>
+      <div style="display: flex; gap: 6px; justify-content: space-between;" role="group" aria-label="Густота волосков">
+        <button type="button" class="p">0</button><button type="button" class="p">1</button><button type="button" class="p">2</button><button type="button" class="p on">3</button><button type="button" class="p">4</button><button type="button" class="p">5</button>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 0 0 auto;">
+      <div style="display: flex; justify-content: space-between; gap: 12px; align-items: baseline;">
+        <div style="min-width: 0;">
+          <div style="font-size: 16px; font-weight: 700;">Сложность природной формы</div>
+          <div style="font-size: 13px; color: #6F7883; margin-top: 2px;">падающие, восходящие, прямые, дугообразные</div>
+        </div>
+        <div style="font-size: 16px; font-weight: 700; white-space: nowrap; color: #6F7883;">—</div>
+      </div>
+      <div style="display: flex; gap: 6px; justify-content: space-between;" role="group" aria-label="Сложность формы">
+        <button type="button" class="p">0</button><button type="button" class="p">1</button><button type="button" class="p">2</button><button type="button" class="p">3</button><button type="button" class="p">4</button><button type="button" class="p">5</button>
+      </div>
+      <div style="font-size: 12px; color: #6F7883;">Нет ракурса — ставьте 0 и напишите в комментарии</div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px; flex: 0 0 auto;">
+      <span style="font-size: 13px; font-weight: 700; color: #6F7883; text-transform: uppercase; letter-spacing: 0.4px;">Форма и чистота</span>
+      <span style="font-size: 13px; color: #6F7883;">40 баллов</span>
+    </div>
+    <div style="background: #FFFFFF; border-radius: 18px 18px 0 0; padding: 16px 16px 0; display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto;">
+      <div style="font-size: 16px; font-weight: 700;">Чистота работы</div>
+      <div style="font-size: 13px; color: #6F7883;">без остатков красителя, воска, недощипанных волосков</div>
+    </div>
+  </div>
+
+  <!-- Нижняя панель -->
+  <div style="flex: 0 0 auto; background: #FFFFFF; border-top: 1px solid #E6E8EB; padding: 12px 16px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 22px; font-weight: 800; letter-spacing: -0.4px;">7 <span style="font-size: 13px; color: #6F7883; font-weight: 600;">из 100</span></span>
+      <span style="font-size: 12px; color: #6F7883;">заполнено 3 из 16</span>
+    </div>
+    <button type="button" style="height: 52px; padding: 0 22px; border-radius: 14px; border: 0; background: #EEF0F2; font-size: 15px; font-weight: 700; font-family: inherit; color: #9AA3AD;">Отправить</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
