@@ -301,6 +301,7 @@ export function seed() {
       short: 'LB',
       stage: 'judging',
       logo: null,
+      theme: { preset: 'orange', brand: null, cta: null, bg: 'theme' },
       submitUntil: '15 октября, 23:59',
       acceptClosed: '15 октября',
       deadline: '28 октября, 23:59',

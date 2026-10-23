@@ -3,6 +3,7 @@ import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfN
 import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, progress, placeSummary, grandPrix } from '../scoring.js';
 import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES } from '../ui.js';
 import { shell, stageChip } from './common.js';
+import { THEMES, BACKGROUNDS, themeVars } from '../theme.js';
 
 const pubBtn = () => (st().championship.stage === 'published'
   ? '<button class="btn" data-action="set-stage" data-stage="judging">Снять итоги с публикации</button>'
@@ -109,6 +110,27 @@ export function settings() {
           <div class="grid-2">
             ${field('c-name', 'Название чемпионата', 'name')}
             ${field('c-short', 'Короткий код', 'short', 'До трёх букв, показывается вместо логотипа, пока его нет')}
+          </div>
+        </section>
+        <section class="card stack">
+          <div class="row-between"><h3>Оформление</h3><span class="small muted">видят судьи, участники и гости этого чемпионата</span></div>
+          <div class="theme-grid">
+            ${THEMES.map((th) => { const v = themeVars({ preset: th.id }); const on = (c.theme?.preset || 'orange') === th.id && !c.theme?.brand && !c.theme?.cta; return `
+              <button type="button" class="theme-card ${on ? 'on' : ''}" data-action="theme-preset" data-id="${th.id}" aria-pressed="${on}">
+                <span class="theme-preview" style="background:${v['--bg']}"><span style="background:${th.brand}"></span><span style="background:${th.cta}"></span><span style="background:${v['--peach']}"></span></span>
+                <b class="small">${th.name}</b>
+              </button>`; }).join('')}
+          </div>
+          <div class="grid-3">
+            <div class="field"><label for="th-brand">Цвет бренда</label><div class="row" style="gap:8px"><input id="th-brand" type="color" value="${themeVars(c.theme)['--brand']}" data-change="theme-color" data-key="brand" style="width:48px;height:40px;border:0;background:none;padding:0;cursor:pointer"><span class="small muted">${themeVars(c.theme)['--brand'].toUpperCase()}</span></div></div>
+            <div class="field"><label for="th-cta">Цвет кнопки</label><div class="row" style="gap:8px"><input id="th-cta" type="color" value="${themeVars(c.theme)['--cta']}" data-change="theme-color" data-key="cta" style="width:48px;height:40px;border:0;background:none;padding:0;cursor:pointer"><span class="small muted">${themeVars(c.theme)['--cta'].toUpperCase()}</span></div></div>
+            <div class="field"><label for="th-bg">Подложка</label><select id="th-bg" class="input" data-change="theme-bg">${BACKGROUNDS.map((b) => `<option value="${b.id}" ${(c.theme?.bg || 'theme') === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select></div>
+          </div>
+          <div class="row" style="gap:12px">
+            <span class="btn primary" style="pointer-events:none">Так выглядит главная кнопка</span>
+            <span class="chip peach">подсветка</span>
+            <span class="place p1">1 место</span><span class="place p3">3 место</span>
+            ${c.theme?.brand || c.theme?.cta ? '<button class="btn s ghost" data-action="theme-reset">Вернуть цвета темы</button>' : ''}
           </div>
         </section>
         <section class="card stack">
@@ -484,6 +506,8 @@ export const actions = {
   'part-new': () => { ui.newParticipant = true; rerender(); },
   'part-new-link': () => { ui.newParticipant = true; location.hash = '#/org/participants'; },
   'part-cancel': () => { ui.newParticipant = false; rerender(); },
+  'theme-preset': (el) => { const c = st().championship; c.theme = { preset: el.dataset.id, brand: null, cta: null, bg: c.theme?.bg || 'theme' }; save(); toast('Тема применена'); rerender(); },
+  'theme-reset': () => { const c = st().championship; c.theme = { ...(c.theme || {}), brand: null, cta: null }; save(); rerender(); },
   'champ-logo-remove': () => { st().championship.logo = null; save(); toast('Логотип убран'); rerender(); },
   'mark-paid': (el) => { const p = partById(el.dataset.id); if (p) { p.paid = true; save(); toast(`Оплата отмечена: ${p.name}`); rerender(); } },
   remind: (el) => toast(el.dataset.who === 'all' ? 'Напоминание отправлено всем, кто не закончил' : `Напоминание отправлено: ${el.dataset.who}`),
@@ -564,6 +588,8 @@ export const forms = {
 };
 
 export const changes = {
+  'theme-color': (el) => { const c = st().championship; c.theme = { ...(c.theme || { preset: 'orange' }), [el.dataset.key]: el.value }; save(); rerender(); },
+  'theme-bg': (el) => { const c = st().championship; c.theme = { ...(c.theme || { preset: 'orange' }), bg: el.value }; save(); rerender(); },
   'champ-field': (el) => {
     const key = el.dataset.key;
     const v = el.value.trim();

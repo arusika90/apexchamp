@@ -1,5 +1,6 @@
 // Точка входа: пароль на вход, роутер на hash, делегирование событий, общие действия.
 import { gate } from './gate.js';
+import { applyTheme, resetTheme } from './theme.js';
 import { load, st, ui, save, roleHome, resetData, addParticipant, updateParticipant, sessionUser } from './store.js';
 import { toast, rerender } from './ui.js';
 import { ROLE_NAME } from './views/common.js';
@@ -56,6 +57,8 @@ function render() {
   if (m.r.role && !s.session) { location.replace('#/roles'); return; }
   if (path !== lastPath && ui.roleModal) ui.roleModal = false;
   const wasOpen = !!document.getElementById('role-modal');
+  const platformPage = ['roles', 'design', 'owner', 'register'].includes(m.r.p);
+  if (platformPage) resetTheme(); else applyTheme(s.championship.theme);
   document.getElementById('app').innerHTML = m.r.v(...m.params);
   document.title = `${m.r.t} · ApexChamp`;
   document.body.classList.toggle('modal-open', !!ui.roleModal);

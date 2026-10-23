@@ -4,7 +4,10 @@
 :root {
   --font: 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* Бренд и действие */
+  /* Бренд платформы: не зависит от темы чемпионата */
+  --platform-brand: #ED5C1E;
+
+  /* Бренд и действие (переопределяется темой чемпионата) */
   --brand: #ED5C1E;        /* Persimmon — логотип, hero, активные состояния */
   --brand-2: #FF6827;      /* ярче — hover ссылок, иконки */
   --brand-ink: #BE2E00;    /* текст на персиковом */
