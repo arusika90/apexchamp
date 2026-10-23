@@ -89,6 +89,7 @@ const svg = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 
 export const I = {
   lash: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 14c4-4.5 14-4.5 18 0"/><path d="M6.5 11 5 8"/><path d="M10.5 9.6 10 6.2"/><path d="m14.5 9.7.6-3.4"/><path d="m18 11.2 1.6-2.8"/></svg>',
+  menu: svg('<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/>'),
   bell: svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>'),
   check: svg('<path d="M20 6 9 17l-5-5"/>'),
   left: svg('<path d="m15 18-6-6 6-6"/>'),

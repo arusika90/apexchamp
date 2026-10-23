@@ -34,7 +34,7 @@ export function header(active) {
       <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
       ${role === 'owner' || role === 'designer' ? '' : `<span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>`}
       <nav class="nav" aria-label="Разделы">${navHtml}</nav>
-      <div class="user">${userHtml}</div>
+      <div class="user">${nav.length ? `<button type="button" class="btn icon burger" data-action="nav-open" aria-label="Меню" aria-expanded="${ui.navOpen ? 'true' : 'false'}">${I.menu}</button>` : ''}${userHtml}</div>
     </div>
   </header>`;
 }
@@ -57,8 +57,31 @@ export function footer() {
   </footer>`;
 }
 
+export function navDrawer(active) {
+  const s = st();
+  const role = s.session?.role;
+  const u = sessionUser();
+  const nav = role ? NAV[role] : [];
+  return `
+  <div class="modal-backdrop left" data-nav-backdrop>
+    <div class="modal nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Меню" tabindex="-1">
+      <div class="row-between" style="flex-wrap:nowrap">
+        <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
+        <button class="btn icon ghost" data-action="nav-close" aria-label="Закрыть">${I.plus.replace('<svg', '<svg style="transform:rotate(45deg)"')}</button>
+      </div>
+      ${u ? `<div class="row" style="gap:10px;padding:4px 0"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span><span class="col" style="gap:0;line-height:1.2"><b class="small">${esc(u.name)}</b><span class="xs muted">${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span></div>` : ''}
+      ${role !== 'owner' && role !== 'designer' ? `<span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}" style="align-self:flex-start">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>` : ''}
+      <nav class="nav-list" aria-label="Разделы">${nav.map(([r, label]) => `<a href="#/${r}" class="${active === r ? 'active' : ''}" data-action="nav-go">${label}</a>`).join('')}</nav>
+      <div class="row-between" style="border-top:1px solid var(--line);padding-top:14px;margin-top:auto">
+        <button class="btn s" data-action="nav-roles">${I.swap}<span>Сменить роль</span></button>
+        <button class="btn s ghost" data-action="logout">${I.logout}<span>Выйти</span></button>
+      </div>
+    </div>
+  </div>`;
+}
+
 export function shell(active, body, actionbar = '') {
-  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.roleModal ? roleModal() : ''}`;
+  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.navOpen ? navDrawer(active) : ''}${ui.roleModal ? roleModal() : ''}`;
 }
 
 // Всплывающее окно «Выйти»: сразу предлагает, кем и в каком состоянии войти.

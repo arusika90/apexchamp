@@ -57,13 +57,14 @@ function render() {
   if (m.r.role && s.session?.role !== m.r.role) { location.replace(home()); return; }
   if (m.r.role && !s.session) { location.replace('#/roles'); return; }
   if (path !== lastPath && ui.roleModal) ui.roleModal = false;
+  if (path !== lastPath) ui.navOpen = false;
   const wasOpen = !!document.getElementById('role-modal');
   const platformPage = ['roles', 'design', 'owner', 'register'].includes(m.r.p);
   if (platformPage) resetTheme(); else applyTheme(s.championship.theme);
   document.getElementById('app').innerHTML = m.r.v(...m.params);
   document.title = `${m.r.t} · ApexChamp`;
   applyTableFilters();
-  document.body.classList.toggle('modal-open', !!ui.roleModal);
+  document.body.classList.toggle('modal-open', !!ui.roleModal || !!ui.navOpen);
   if (ui.roleModal && !wasOpen) document.getElementById('role-modal')?.focus();
   if (path !== lastPath) { window.scrollTo(0, 0); lastPath = path; }
 }
@@ -101,6 +102,10 @@ function go(hash) {
 
 const common = {
   'open-role-modal': () => { ui.roleModal = true; ui.modalRole = null; render(); },
+  'nav-open': () => { ui.navOpen = true; render(); document.getElementById('nav-drawer')?.focus(); },
+  'nav-close': () => { ui.navOpen = false; render(); },
+  'nav-go': (el) => { ui.navOpen = false; go(el.getAttribute('href')); },
+  'nav-roles': () => { ui.navOpen = false; ui.roleModal = true; ui.modalRole = null; render(); },
   'modal-role': (el) => { ui.modalRole = el.dataset.role || null; render(); },
   'close-modal': () => closeModal(),
   'login-persona': (el) => {
@@ -195,7 +200,7 @@ const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs, 'table-sea
 function start() {
   load();
   document.addEventListener('click', (e) => {
-    if (e.target.classList?.contains('modal-backdrop')) { closeModal(); return; }
+    if (e.target.classList?.contains('modal-backdrop')) { if (e.target.hasAttribute('data-nav-backdrop')) { ui.navOpen = false; render(); } else closeModal(); return; }
     const rowLink = e.target.closest('tr.row-link');
     if (rowLink && !e.target.closest('a, button, input, select')) { location.hash = rowLink.dataset.href; return; }
     const el = e.target.closest('[data-action]');
@@ -220,6 +225,7 @@ function start() {
     if (el && INPUTS[el.dataset.input]) INPUTS[el.dataset.input](el, e);
   });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && ui.navOpen) { ui.navOpen = false; render(); return; }
     if (e.key === 'Escape' && ui.roleModal) { closeModal(); return; }
     if (e.key === 'Enter' && e.target.matches('input[data-change]')) e.target.blur();
   });

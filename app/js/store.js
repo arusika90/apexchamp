@@ -19,6 +19,7 @@ export const ui = {
   modalRole: null,
   newParticipant: false,
   newJudge: false,
+  navOpen: false,
   tf: {},
 };
 
