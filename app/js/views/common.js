@@ -103,10 +103,13 @@ export function personaName(role, pr) {
 export function personaButton(role, pr, compact = false, index = null) {
   const name = personaName(role, pr);
   return `<button type="button" class="persona ${compact ? 'compact' : ''}" data-action="login-persona" data-role="${role}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">
-    ${index != null ? `<span class="num-badge">${index}</span>` : ''}
-    <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
-    <span class="col grow" style="gap:1px;min-width:0"><b class="small">${esc(pr.label)}${name ? ` <span class="muted" style="font-weight:600">· ${esc(name)}</span>` : ''}</b>${compact ? '' : `<span class="xs muted">${esc(pr.desc)}</span>`}</span>
-    ${compact ? '' : `<span class="persona-go">Войти ${I.right.replace('<svg', '<svg width="16" height="16"')}</span>`}
+    <span class="persona-top">
+      ${index != null ? `<span class="num-badge">${index}</span>` : ''}
+      <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
+      ${compact ? '' : `<span class="persona-go">Войти ${I.right.replace('<svg', '<svg width="16" height="16"')}</span>`}
+    </span>
+    <b class="persona-title">${esc(pr.label)}${name ? ` <span class="muted" style="font-weight:600">· ${esc(name)}</span>` : ''}</b>
+    ${compact ? '' : `<span class="xs muted">${esc(pr.desc)}</span>`}
   </button>`;
 }
 
