@@ -29,6 +29,7 @@ const ROUTES = [
   { p: 'judge/work/:code', v: judge.sheet, role: 'judge', t: 'Ведомость' },
   { p: 'me', v: participant.home, role: 'part', t: 'Мои работы' },
   { p: 'owner', v: owner.console_, role: 'owner', t: 'Платформа' },
+  { p: 'owner/tenant/:id', v: owner.tenant, role: 'owner', t: 'Чемпионат' },
 ];
 
 function match(path) {
@@ -162,13 +163,15 @@ const FORMS = {
 
 Object.assign(FORMS, participant.forms, owner.forms, org.forms);
 const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
-const CHANGES = { ...org.changes, ...judge.changes };
+const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes };
 const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs };
 
 function start() {
   load();
   document.addEventListener('click', (e) => {
     if (e.target.classList?.contains('modal-backdrop')) { closeModal(); return; }
+    const rowLink = e.target.closest('tr.row-link');
+    if (rowLink && !e.target.closest('a, button, input, select')) { location.hash = rowLink.dataset.href; return; }
     const el = e.target.closest('[data-action]');
     if (!el || el.disabled) return;
     const fn = ACTIONS[el.dataset.action];

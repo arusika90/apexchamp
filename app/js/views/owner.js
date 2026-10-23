@@ -2,8 +2,9 @@
 // Сейчас по-настоящему работает один чемпионат (демо-данные), остальные строки — пример того,
 // как будет выглядеть список при нескольких арендаторах.
 import { st, save } from '../store.js';
-import { esc, I, toast, rerender, plural } from '../ui.js';
+import { esc, I, toast, rerender, plural, href, pct } from '../ui.js';
 import { shell } from './common.js';
+import { progress } from '../scoring.js';
 
 const PLANS = [
   { id: 'trial', name: 'Пробный', desc: 'до 30 работ, 1 чемпионат' },
@@ -31,16 +32,13 @@ export function console_() {
   const active = tenants.filter((t) => t.status === 'active' || t.status === 'trial').length;
   const orgs = new Set(tenants.map((t) => t.orgEmail)).size;
   const rows = tenants.map((t) => `
-    <tr>
-      <td><b>${esc(t.name)}</b><div class="xs muted">${t.real ? `${s.works.length} ${plural(s.works.length, 'работа', 'работы', 'работ')} · ${s.nominations.length} номинаций` : esc(t.note || '')}</div></td>
+    <tr class="row-link" data-href="${href('owner', 'tenant', t.id)}">
+      <td><a class="b" style="color:var(--ink)" href="${href('owner', 'tenant', t.id)}">${esc(t.name)}</a><div class="xs muted">${t.real ? `${s.works.length} ${plural(s.works.length, 'работа', 'работы', 'работ')} · ${s.nominations.length} номинаций` : esc(t.note || '')}</div></td>
       <td class="small"><a href="https://${esc(t.slug)}.apexchamp.beauty" onclick="return false">${esc(t.slug)}.apexchamp.beauty</a></td>
       <td class="small">${esc(t.orgName)}<div class="xs muted">${esc(t.orgEmail)}</div></td>
       <td class="small">${planName(t.plan)}<div class="xs muted">до ${esc(t.until)}</div></td>
       <td>${statusChip(t)}</td>
-      <td><div class="row" style="gap:6px;flex-wrap:nowrap">
-        ${t.real ? '<button class="btn xs" data-action="impersonate" data-role="org" data-id="">Войти как организатор</button>' : ''}
-        ${t.status === 'paused' ? `<button class="btn xs" data-action="tenant-status" data-id="${t.id}" data-status="active">Возобновить</button>` : t.status === 'active' || t.status === 'trial' ? `<button class="btn xs ghost" data-action="tenant-status" data-id="${t.id}" data-status="paused">Приостановить</button>` : `<button class="btn xs" data-action="tenant-status" data-id="${t.id}" data-status="active">Активировать</button>`}
-      </div></td>
+      <td><a class="btn xs" href="${href('owner', 'tenant', t.id)}">Открыть ${I.right.replace('<svg', '<svg width="14" height="14"')}</a></td>
     </tr>`).join('');
 
   const body = `
@@ -87,7 +85,87 @@ export function console_() {
   return shell('owner', body);
 }
 
+// Карточка чемпионата-арендатора
+export function tenant(id) {
+  const s = st();
+  const t = (s.tenants || []).find((x) => x.id === id);
+  if (!t) return shell('owner', '<div class="empty">Чемпионат не найден.</div>');
+  const pr = t.real ? progress() : null;
+  const stageName = { submission: 'приём работ', judging: 'судейство', published: 'итоги опубликованы' }[s.championship.stage];
+  const stats = t.real
+    ? `<div class="grid-4">
+         <section class="card kpi"><span class="label">Работ</span><span class="value">${s.works.length}</span><span class="small muted">${s.nominations.length} номинаций</span></section>
+         <section class="card kpi"><span class="label">Участников</span><span class="value">${s.participants.length}</span></section>
+         <section class="card kpi"><span class="label">Судей</span><span class="value">${s.judges.length}</span></section>
+         <section class="card kpi"><span class="label">Этап</span><span class="value" style="font-size:22px">${stageName}</span><span class="small muted">оценок отправлено ${Math.round(pr.frac * 100)} %</span></section>
+       </div>`
+    : `<section class="card peach pad-s small"><b>${esc(t.note || 'Чемпионат ещё не настроен')}.</b> Статистика появится, когда организатор заведёт номинации и работы.</section>`;
+  const body = `
+    <div class="crumbs"><a href="#/owner">Платформа</a><span>›</span><span>${esc(t.name)}</span></div>
+    <div class="page-head">
+      <div class="col" style="gap:8px"><h1>${esc(t.name)}</h1><div class="row"><a href="https://${esc(t.slug)}.apexchamp.beauty" onclick="return false">${esc(t.slug)}.apexchamp.beauty</a>${statusChip(t)}</div></div>
+      <div class="row">
+        ${t.real ? '<button class="btn" data-action="impersonate" data-role="org" data-id="">Войти как организатор</button><a class="btn" href="#/results">Публичная страница</a>' : ''}
+        ${t.status === 'paused' ? `<button class="btn primary" data-action="tenant-status" data-id="${t.id}" data-status="active">Возобновить доступ</button>` : t.status === 'active' || t.status === 'trial' ? `<button class="btn" data-action="tenant-status" data-id="${t.id}" data-status="paused">Приостановить</button>` : `<button class="btn primary" data-action="tenant-status" data-id="${t.id}" data-status="active">Активировать после оплаты</button>`}
+      </div>
+    </div>
+    ${stats}
+    <div class="two-col">
+      <div class="main stack">
+        <section class="card stack">
+          <h3>Организатор</h3>
+          <div class="grid-2">
+            <div class="field"><label for="tn-org">Имя</label><input id="tn-org" class="input" value="${esc(t.orgName)}" data-change="tenant-field" data-id="${t.id}" data-key="orgName"></div>
+            <div class="field"><label for="tn-email">Почта</label><input id="tn-email" class="input" type="email" value="${esc(t.orgEmail)}" data-change="tenant-field" data-id="${t.id}" data-key="orgEmail"></div>
+          </div>
+          <div class="row"><button class="btn s" data-action="tenant-invite" data-id="${t.id}">Отправить ссылку для входа ещё раз</button></div>
+        </section>
+        <section class="card stack">
+          <h3>Чемпионат</h3>
+          <div class="grid-2">
+            <div class="field"><label for="tn-name">Название</label><input id="tn-name" class="input" value="${esc(t.name)}" data-change="tenant-field" data-id="${t.id}" data-key="name"></div>
+            <div class="field"><label for="tn-slug">Адрес</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="tn-slug" class="input" value="${esc(t.slug)}" data-change="tenant-field" data-id="${t.id}" data-key="slug" style="min-width:0"><span class="small muted" style="white-space:nowrap">.apexchamp.beauty</span></div></div>
+          </div>
+        </section>
+      </div>
+      <aside class="side">
+        <section class="card stack">
+          <h3>Доступ</h3>
+          <div class="field"><label for="tn-plan">Тариф</label><select id="tn-plan" class="input" data-change="tenant-field" data-id="${t.id}" data-key="plan">${PLANS.map((p) => `<option value="${p.id}" ${p.id === t.plan ? 'selected' : ''}>${p.name} — ${p.desc}</option>`).join('')}</select></div>
+          <div class="field"><label for="tn-until">Действует до</label><input id="tn-until" class="input" value="${esc(t.until)}" data-change="tenant-field" data-id="${t.id}" data-key="until"></div>
+          <div class="row-between small"><span class="muted">Статус</span>${statusChip(t)}</div>
+          <p class="xs muted">После окончания срока кабинеты закрываются, публичная таблица результатов остаётся открытой.</p>
+        </section>
+        ${t.real ? '' : `<section class="card stack"><h3>Удалить</h3><p class="small muted">Убирает чемпионат из списка. В настоящей системе данные уйдут в архив на 90 дней.</p><button class="btn s danger" data-action="tenant-delete" data-id="${t.id}">Удалить чемпионат</button></section>`}
+      </aside>
+    </div>`;
+  return shell('owner', body);
+}
+
+export const changes = {
+  'tenant-field': (el) => {
+    const t = (st().tenants || []).find((x) => x.id === el.dataset.id);
+    if (!t) return;
+    const v = el.dataset.key === 'slug' ? slugify(el.value) : el.value.trim();
+    if (!v) { toast('Поле не может быть пустым'); rerender(); return; }
+    t[el.dataset.key] = v;
+    save();
+    toast('Сохранено');
+    rerender();
+  },
+};
+
 export const actions = {
+  'tenant-invite': () => toast('Письмо со ссылкой для входа отправлено (в демо — условно)'),
+  'tenant-delete': (el) => {
+    const s = st();
+    const t = (s.tenants || []).find((x) => x.id === el.dataset.id);
+    if (!t || t.real) return;
+    s.tenants = s.tenants.filter((x) => x.id !== t.id);
+    save();
+    toast(`${t.name} удалён`);
+    location.hash = '#/owner';
+  },
   'tenant-status': (el) => {
     const t = (st().tenants || []).find((x) => x.id === el.dataset.id);
     if (!t) return;
