@@ -1,7 +1,7 @@
 // Вход по ролям: можно посмотреть систему глазами любой роли, выйти и войти в другую.
 import { st, sessionUser, roleHome } from '../store.js';
 import { esc, I } from '../ui.js';
-import { ROLE_NAME, logoMark, wordmark, shell, personaButton, footer } from './common.js';
+import { ROLE_NAME, logoMark, wordmark, shell, personaButton, footer, header } from './common.js';
 import { PERSONAS, TIPS, currentState } from '../personas.js';
 import { CATEGORIES } from '../ui.js';
 
@@ -52,11 +52,9 @@ export function render() {
 
   return `
   <div class="login">
+    ${header('roles')}
     <div class="login-in">
-      <div class="row-between">
-        <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
-        ${u ? `<div class="row"><span class="chip">${esc(u.name)} · ${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}</span><a class="btn s primary" href="#/${roleHome(role)}">Продолжить</a><button class="btn s" data-action="logout">${I.logout}<span>Выйти</span></button></div>` : ''}
-      </div>
+      ${u ? `<div class="row-between card pad-s"><span class="row" style="gap:10px"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span><span class="small">Вы вошли: <b>${esc(u.name)}</b> · ${ROLE_NAME[role].toLowerCase()}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span><div class="row"><a class="btn s primary" href="#/${roleHome(role)}">Продолжить</a><button class="btn s" data-action="logout">${I.logout}<span>Выйти</span></button></div></div>` : ''}
 
       <section class="hero stack">
         <span class="chip" style="background:rgba(255,255,255,.2);color:#fff;align-self:flex-start">Демо · ${esc(s.championship.name)}</span>
