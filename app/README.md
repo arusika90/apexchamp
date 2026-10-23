@@ -9,7 +9,7 @@
 Из папки проекта:
 
 ```bash
-python3 -m http.server 5173 --directory app
+python3 serve.py
 ```
 
 Открыть http://localhost:5173. Нужен именно сервер: браузер не грузит модули с `file://`.
