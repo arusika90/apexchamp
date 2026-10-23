@@ -17,6 +17,7 @@ export const ui = {
   editProfile: false,
   newWork: false,
   modalRole: null,
+  newParticipant: false,
 };
 
 export function load() {

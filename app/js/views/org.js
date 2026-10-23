@@ -1,5 +1,5 @@
 // Кабинет организатора: видит и правит всё.
-import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf } from '../store.js';
+import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant } from '../store.js';
 import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, progress, placeSummary, grandPrix } from '../scoring.js';
 import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES } from '../ui.js';
 import { shell, stageChip } from './common.js';
@@ -85,6 +85,7 @@ export function dashboard() {
         <section class="card stack" style="gap:10px">
           <h3>Быстрые действия</h3>
           <a class="list-item" href="#/org/settings"><b>Название, сроки, логотип</b><span class="muted">${I.right}</span></a>
+          <a class="list-item" href="#/org/participants" data-action="part-new-link"><b>Добавить участника</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/judges"><b>Судьи и прогресс</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/participants"><b>Участники с именами</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/results"><b>Предпросмотр результатов</b><span class="muted">${I.right}</span></a>
@@ -303,8 +304,22 @@ export function participants() {
   const body = `
     <div class="page-head">
       <div class="col" style="gap:8px"><h1>Участники</h1><p class="muted">Имена, инстаграм и страна видит только организатор. Судьи и публика видят номера работ.</p></div>
-      <button class="btn" data-action="demo-only">${I.plus}<span>Импорт из Excel</span></button>
+      <div class="row"><button class="btn" data-action="demo-only">Импорт из Excel</button><button class="btn primary" data-action="part-new">${I.plus}<span>Добавить участника</span></button></div>
     </div>
+    ${ui.newParticipant ? `
+    <form class="card stack" data-form="org-participant" style="border:2px solid var(--brand)">
+      <div class="row-between"><h3>Новый участник</h3><button class="btn xs ghost" type="button" data-action="part-cancel">Отмена</button></div>
+      <div class="grid-3">
+        <div class="field"><label for="np-name">Имя и фамилия</label><input id="np-name" name="name" class="input" required></div>
+        <div class="field"><label for="np-insta">Инстаграм</label><input id="np-insta" name="insta" class="input" placeholder="@ник"></div>
+        <div class="field"><label for="np-country">Страна</label><input id="np-country" name="country" class="input"></div>
+        <div class="field"><label for="np-email">Почта</label><input id="np-email" name="email" class="input" type="email" placeholder="для входа и дипломов"></div>
+        <div class="field"><label for="np-cat">Категория</label><select id="np-cat" name="cat" class="input">${CATEGORIES.map((c) => `<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+        <div class="field"><label for="np-paid">Оплата</label><select id="np-paid" name="paid" class="input"><option value="">Ожидает оплаты</option><option value="paid">Оплачено</option><option value="free">Бесплатное участие</option></select></div>
+      </div>
+      <p class="xs muted">Участник получит письмо со ссылкой для входа. Сам он сможет только подать работы и править профиль.</p>
+      <div class="row"><button class="btn primary" type="submit">Создать участника</button></div>
+    </form>` : ''}
     <section class="card flat"><div class="table-wrap"><table class="table">
       <thead><tr><th>Участник</th><th>Страна</th><th>Работы</th><th>Категория</th><th>Оплата</th><th>Гран-при</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
@@ -466,6 +481,9 @@ function critName(n, critId) {
 
 export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
+  'part-new': () => { ui.newParticipant = true; rerender(); },
+  'part-new-link': () => { ui.newParticipant = true; location.hash = '#/org/participants'; },
+  'part-cancel': () => { ui.newParticipant = false; rerender(); },
   'champ-logo-remove': () => { st().championship.logo = null; save(); toast('Логотип убран'); rerender(); },
   'mark-paid': (el) => { const p = partById(el.dataset.id); if (p) { p.paid = true; save(); toast(`Оплата отмечена: ${p.name}`); rerender(); } },
   remind: (el) => toast(el.dataset.who === 'all' ? 'Напоминание отправлено всем, кто не закончил' : `Напоминание отправлено: ${el.dataset.who}`),
@@ -529,6 +547,21 @@ function fitLogo(file) {
     img.src = url;
   });
 }
+
+export const forms = {
+  'org-participant': (form) => {
+    const d = Object.fromEntries(new FormData(form).entries());
+    if (!d.name?.trim()) { toast('Укажите имя и фамилию'); return; }
+    const id = addParticipant(d);
+    const p = partById(id);
+    p.paid = d.paid === 'paid';
+    p.free = d.paid === 'free';
+    ui.newParticipant = false;
+    save();
+    toast(`Участник ${p.name} добавлен`);
+    rerender();
+  },
+};
 
 export const changes = {
   'champ-field': (el) => {

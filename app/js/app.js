@@ -157,7 +157,7 @@ const FORMS = {
   },
 };
 
-Object.assign(FORMS, participant.forms, owner.forms);
+Object.assign(FORMS, participant.forms, owner.forms, org.forms);
 const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
 const CHANGES = { ...org.changes, ...judge.changes };
 const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs };

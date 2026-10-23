@@ -104,7 +104,7 @@ export function roleModal() {
       <div class="persona-rows">${list}</div>
       <div class="row-between" style="border-top:1px solid var(--line);padding-top:14px">
         ${u ? `<button class="btn s ghost" data-action="logout">${I.logout}<span>Выйти</span></button>` : '<span></span>'}
-        <div class="row" style="gap:8px"><a class="xs b" href="#/register" data-action="close-modal-link">Регистрация участника</a><button class="btn s" data-action="close-modal">Отмена</button></div>
+        <button class="btn s" data-action="close-modal">Отмена</button>
       </div>
     </div>
   </div>`;
