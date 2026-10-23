@@ -263,8 +263,17 @@ export const actions = {
     sh.status = 'sent';
     sh.at = Date.now();
     save();
-    toast(`Оценка ${code} отправлена`);
-    goNextTodo(code);
+    const j = sessionUser();
+    const all = myGroups(j.id).flatMap((g) => g.works);
+    const left = all.filter((x) => x.code !== code && !['sent', 'recused'].includes(statusOf(x.code, j.id)));
+    const next = left[0];
+    ui.bridge = next
+      ? { icon: 'ok', keep: true, title: `Оценка ${code} отправлена`, lead: `Осталось ${left.length} ${plural(left.length, 'работа', 'работы', 'работ')}. Отправленную оценку можно поправить до закрытия судейства.`,
+          actions: [{ label: 'К списку', href: '#/judge' }, { label: `Следующая: ${next.code}`, href: href('judge', 'work', next.code), primary: true }] }
+      : { icon: 'ok', keep: true, title: 'Все работы оценены', lead: 'Спасибо! Организатор увидит, что вы закончили. Итоги откроются после оглашения.',
+          details: ['До закрытия судейства оценки можно поправить', 'После оглашения ведомости закроются для правок', 'Участники увидят ваш комментарий с подписью «Судья N»'], detailsTitle: 'Что дальше',
+          actions: [{ label: 'К списку', href: '#/judge', primary: true }] };
+    location.hash = '#/judge';
   },
   recuse: (el) => {
     const code = el.dataset.code;

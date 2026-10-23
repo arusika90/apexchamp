@@ -131,8 +131,26 @@ export function stageDialog() {
   </div>`;
 }
 
+// Мостик «что дальше» после ключевого действия. ui.bridge = { title, lead, details: [], actions: [{ label, href | action+data, primary }] }
+export function bridgeDialog() {
+  const b = ui.bridge;
+  if (!b) return '';
+  const btn = (a) => a.href
+    ? `<a class="btn ${a.primary ? 'primary' : ''}" href="${a.href}" data-action="bridge-go">${esc(a.label)}</a>`
+    : `<button class="btn ${a.primary ? 'primary' : ''}" data-action="${a.action}" ${Object.entries(a.data || {}).map(([k, v]) => `data-${k}="${esc(v)}"`).join(' ')}>${esc(a.label)}</button>`;
+  return `
+  <div class="modal-backdrop center" data-bridge-backdrop>
+    <div class="dialog" id="bridge-dialog" role="dialog" aria-modal="true" aria-labelledby="bridge-title" tabindex="-1">
+      <div class="row-between" style="flex-wrap:nowrap"><h2 id="bridge-title" style="font-size:22px">${b.icon === 'ok' ? `<span class="bridge-ok">${I.check}</span>` : ''}${esc(b.title)}</h2><button class="btn icon ghost" data-action="bridge-close" aria-label="Закрыть">${I.plus.replace('<svg', '<svg style="transform:rotate(45deg)"')}</button></div>
+      ${b.lead ? `<p class="muted">${esc(b.lead)}</p>` : ''}
+      ${b.details && b.details.length ? `<details class="stage-details"><summary>${esc(b.detailsTitle || 'Что дальше')}</summary><ul>${b.details.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}
+      <div class="row" style="justify-content:flex-end;gap:10px">${(b.actions || []).map(btn).join('')}</div>
+    </div>
+  </div>`;
+}
+
 export function shell(active, body, actionbar = '') {
-  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.navOpen ? navDrawer(active) : ''}${ui.roleModal ? roleModal() : ''}${ui.stageAsk ? stageDialog() : ''}`;
+  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.navOpen ? navDrawer(active) : ''}${ui.roleModal ? roleModal() : ''}${ui.stageAsk ? stageDialog() : ''}${ui.bridge ? bridgeDialog() : ''}`;
 }
 
 // Всплывающее окно «Выйти»: сразу предлагает, кем и в каком состоянии войти.

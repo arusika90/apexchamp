@@ -546,10 +546,10 @@ function critName(n, critId) {
 
 export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
-  'part-new': () => { ui.newParticipant = true; rerender(); },
+  'part-new': () => { ui.bridge = null; ui.newParticipant = true; rerender(); },
   'nom-new': () => { ui.setupNomForm = true; rerender(); },
   'settings-tab': (el) => { ui.settingsTab = el.dataset.tab; rerender(); },
-  'judge-new': () => { ui.newJudge = true; rerender(); },
+  'judge-new': () => { ui.bridge = null; ui.newJudge = true; rerender(); },
   'invite-resend': (el) => { const u = resendInvite(el.dataset.role, el.dataset.id); if (u) toast(`Приглашение отправлено ещё раз: ${u.email || u.name}`); rerender(); },
   'judge-new-link': () => { ui.newJudge = true; location.hash = '#/org/judges'; },
   'judge-cancel': () => { ui.newJudge = false; rerender(); },
@@ -630,7 +630,8 @@ export const forms = {
     if (!nomIds.length) { toast('Отметьте хотя бы одну номинацию'); return; }
     const id = addJudge({ ...d, nomIds });
     ui.newJudge = false;
-    toast(`Судья ${judgeById(id).name} добавлен, ссылка для входа отправлена`);
+    ui.bridge = { icon: 'ok', title: `Судья ${judgeById(id).short} добавлен`, lead: `Приглашение отправлено на ${d.email.trim()}. Статус «ожидает» сменится на «подтверждено» после первого входа.`,
+      actions: [{ label: 'Добавить ещё судью', action: 'judge-new' }, { label: 'К участникам', href: '#/org/participants', primary: true }] };
     rerender();
   },
   'org-participant': (form) => {
@@ -644,7 +645,8 @@ export const forms = {
     p.free = d.paid === 'free';
     ui.newParticipant = false;
     save();
-    toast(`Участник ${p.name} добавлен`);
+    ui.bridge = { icon: 'ok', title: `Участник ${p.name} добавлен`, lead: `Приглашение отправлено на ${p.email}. Участник сам подаст работы и загрузит фото.`,
+      actions: [{ label: 'Добавить ещё', action: 'part-new' }, { label: 'На обзор', href: '#/org', primary: true }] };
     rerender();
   },
 };

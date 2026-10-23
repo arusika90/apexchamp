@@ -218,7 +218,10 @@ export const forms = {
     if (s.ownerPreset === 'empty') s.ownerPreset = 'all';
     s.tenants.unshift({ added: true, id: 't' + Date.now().toString(36), name: d.name.trim(), slug, orgName: (d.orgName || '').trim(), orgEmail: (d.orgEmail || '').trim(), plan: d.plan || 'trial', until: (d.until || '').trim() || 'не задано', status: d.plan === 'trial' ? 'trial' : 'draft', note: 'Приглашение отправлено, чемпионат ещё не настроен', invite: { confirmed: false, sentAt: Date.now(), resent: 0 } });
     save();
-    toast(`Доступ создан, приглашение отправлено на ${(d.orgEmail || '').trim()}`);
+    const nt = s.tenants[0];
+    ui.bridge = { icon: 'ok', title: `Доступ для «${nt.name}» создан`, lead: `Приглашение отправлено на ${nt.orgEmail}. Организатор войдёт по ссылке и пройдёт мастер создания чемпионата.`,
+      details: [`Адрес: ${nt.slug}.apexchamp.beauty`, 'Пока приглашение не подтверждено, чемпионат не настраивается', nt.status === 'draft' ? 'Доступ активируется после оплаты тарифа' : 'Пробный период уже идёт'], detailsTitle: 'Что дальше',
+      actions: [{ label: 'Добавить ещё', action: 'bridge-close' }, { label: 'Открыть карточку', href: href('owner', 'tenant', nt.id), primary: true }] };
     rerender();
   },
 };

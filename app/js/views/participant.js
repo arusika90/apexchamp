@@ -275,7 +275,7 @@ function myWork(code) {
 export const actions = {
   'toggle-work': (el) => { const c = el.dataset.code; ui.expanded[c] = !ui.expanded[c]; rerender(); },
   diploma: () => toast('PDF-дипломы появятся вместе с сервером — сейчас это демо'),
-  'work-new': () => { ui.newWork = true; rerender(); },
+  'work-new': () => { ui.bridge = null; ui.newWork = true; rerender(); },
   'work-cancel': () => { ui.newWork = false; rerender(); },
   'photo-remove': (el) => {
     const w = myWork(el.dataset.code);
@@ -301,7 +301,13 @@ export const actions = {
     if (!nom.photos.every((p) => w.photos?.[p])) { toast('Загрузите все ракурсы'); return; }
     w.status = 'submitted';
     save();
-    toast(`Работа ${w.code} подана на судейство`);
+    const me = sessionUser();
+    const N = Number(st().settings.gpCount) || 3;
+    const sent = st().works.filter((x) => x.pid === me.id && workStatus(x) === 'submitted').length;
+    const canGp = sent >= N && (me.gpWorks || []).length !== N;
+    ui.bridge = { icon: 'ok', title: `Работа ${w.code} подана`, lead: canGp ? `У вас ${sent} поданных работ — можно заявиться на Гран-при.` : 'До закрытия приёма её можно вернуть в черновик и заменить фото.',
+      details: ['После закрытия приёма работы уходят судьям по номерам, без имени', `Итоги и комментарии появятся ${st().championship.announce}`, `Для Гран-при нужно ${N} поданных работы`], detailsTitle: 'Что дальше',
+      actions: [{ label: 'Подать ещё работу', action: 'work-new' }, canGp ? { label: 'Заявиться на Гран-при', action: 'gp-apply', primary: true } : { label: 'Готово', action: 'bridge-close', primary: true }] };
     rerender();
   },
   'work-unsend': (el) => {
@@ -326,6 +332,7 @@ export const actions = {
     const codes = st().works.filter((w) => w.pid === me.id && workStatus(w) === 'submitted').slice(0, N).map((w) => w.code);
     if (codes.length < N) { toast(`Нужно ${N} поданных работ`); return; }
     me.gpWorks = codes;
+    ui.bridge = null;
     save();
     toast('Заявка на Гран-при подана');
     rerender();

@@ -23,6 +23,7 @@ export const ui = {
   navOpen: false,
   setupStep: 0,
   stageAsk: null,
+  bridge: null,
   setupNomForm: false,
   tf: {},
 };
