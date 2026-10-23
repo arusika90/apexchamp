@@ -267,6 +267,8 @@ body.modal-open { overflow: hidden; }
 .role:hover { border-color: var(--peach-2); }
 .role.active { border-color: var(--brand); }
 .role .icon { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; }
+.icon-btn { border: 0; cursor: pointer; transition: transform .1s, box-shadow .12s; }
+.icon-btn:hover { transform: translateY(-1px); box-shadow: 0 0 0 3px var(--peach-2); }
 .role .icon svg { width: 24px; height: 24px; }
 
 /* Состояния ролей */

@@ -42,7 +42,7 @@ export function render() {
   const role = s.session?.role;
   const card = (r, iconBg, iconColor, icon, title, text, extra = '') => `
     <div class="role ${role === r ? 'active' : ''}">
-      <span class="icon" style="background:${iconBg};color:${iconColor}">${icon}</span>
+      <button type="button" class="icon icon-btn" style="background:${iconBg};color:${iconColor}" data-action="modal-open-role" data-role="${r}" title="Состояния роли: описание и что посмотреть" aria-label="${title}: состояния и описание">${icon}</button>
       <h3>${title}</h3>
       <p class="small muted">${text}</p>
       <div class="persona-list">${PERSONAS[r].map((pr, i) => personaButton(r, pr, false, i + 1)).join('')}</div>
@@ -54,7 +54,7 @@ export function render() {
   <div class="login">
     ${header('roles')}
     <div class="login-in">
-      ${u ? `<div class="row-between card pad-s"><span class="row" style="gap:10px"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span><span class="small">Вы вошли: <b>${esc(u.name)}</b> · ${ROLE_NAME[role].toLowerCase()}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span><div class="row"><a class="btn s primary" href="#/${roleHome(role)}">Продолжить</a><button class="btn s" data-action="logout">${I.logout}<span>Выйти</span></button></div></div>` : ''}
+      ${u ? `<div class="row-between card pad-s"><span class="row" style="gap:10px"><button type="button" class="avatar-btn" data-action="open-role-modal" aria-label="Сменить роль"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span></button><span class="small">Вы вошли: <b>${esc(u.name)}</b> · ${ROLE_NAME[role].toLowerCase()}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span><div class="row"><a class="btn s primary" href="#/${roleHome(role)}">Продолжить</a><button class="btn s" data-action="logout">${I.logout}<span>Выйти</span></button></div></div>` : ''}
 
       <section class="hero stack">
         <span class="chip" style="background:rgba(255,255,255,.2);color:#fff;align-self:flex-start">Демо · ${esc(s.championship.name)}</span>
