@@ -2,7 +2,7 @@
 // Сейчас по-настоящему работает один чемпионат (демо-данные), остальные строки — пример того,
 // как будет выглядеть список при нескольких арендаторах.
 import { st, save } from '../store.js';
-import { esc, I, toast, rerender, plural, href, pct, tableToolbar } from '../ui.js';
+import { esc, I, toast, rerender, plural, href, pct, tableToolbar, dateTime } from '../ui.js';
 import { shell } from './common.js';
 import { progress } from '../scoring.js';
 
@@ -21,6 +21,10 @@ const statusChip = (t) => ({
   draft: '<span class="chip">Не оплачен</span>',
 }[t.status] || '');
 
+const inviteCell = (t) => !t.invite || t.invite.confirmed
+  ? `<span class="chip ok">${I.check.replace('<svg', '<svg width="12" height="12"')}подтверждено</span>`
+  : `<span class="row" style="gap:6px;flex-wrap:nowrap"><span class="chip warn" title="Письмо отправлено ${t.invite.sentAt ? dateTime(t.invite.sentAt) : ''}${t.invite.resent ? `, повторно ${t.invite.resent}` : ''}">ожидает</span><button class="btn xs" data-action="tenant-invite" data-id="${t.id}">Отправить снова</button></span>`;
+
 export const slugify = (s) => String(s || '').toLowerCase()
   .replace(/[ё]/g, 'e').replace(/[а-я]/g, (ch) => ({ а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z', и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya' }[ch] || ''))
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
@@ -32,10 +36,11 @@ export function console_() {
   const active = tenants.filter((t) => t.status === 'active' || t.status === 'trial').length;
   const orgs = new Set(tenants.map((t) => t.orgEmail)).size;
   const rows = tenants.map((t) => `
-    <tr class="row-link" data-href="${href('owner', 'tenant', t.id)}" data-search="${esc((t.name + ' ' + t.slug + ' ' + t.orgName + ' ' + t.orgEmail).toLowerCase())}" data-tags="${esc(t.status)} plan-${esc(t.plan)}">
+    <tr class="row-link" data-href="${href('owner', 'tenant', t.id)}" data-search="${esc((t.name + ' ' + t.slug + ' ' + t.orgName + ' ' + t.orgEmail).toLowerCase())}" data-tags="${esc(t.status)} plan-${esc(t.plan)} ${t.invite && !t.invite.confirmed ? 'unconfirmed' : 'confirmed'}">
       <td><a class="b" style="color:var(--ink)" href="${href('owner', 'tenant', t.id)}">${esc(t.name)}</a><div class="xs muted">${t.real ? `${s.works.length} ${plural(s.works.length, 'работа', 'работы', 'работ')} · ${s.nominations.length} номинаций` : esc(t.note || '')}</div></td>
       <td class="small"><a href="https://${esc(t.slug)}.apexchamp.beauty" onclick="return false">${esc(t.slug)}.apexchamp.beauty</a></td>
       <td class="small">${esc(t.orgName)}<div class="xs muted">${esc(t.orgEmail)}</div></td>
+      <td>${inviteCell(t)}</td>
       <td class="small">${planName(t.plan)}<div class="xs muted">до ${esc(t.until)}</div></td>
       <td>${statusChip(t)}</td>
       <td><a class="btn xs" href="${href('owner', 'tenant', t.id)}">Открыть ${I.right.replace('<svg', '<svg width="14" height="14"')}</a></td>
@@ -57,9 +62,9 @@ export function console_() {
         ${preset === 'expired' ? `<section class="card lemon pad-s small"><b>Доступы, которым нужно внимание.</b> Истёкшие чемпионаты уходят в архив: таблица результатов остаётся открытой, кабинеты закрыты. Активируйте после оплаты.</section>` : ''}
         <section class="card flat ${preset === 'empty' && !tenants.length ? 'hide' : ''}">
           <div class="section-title"><h3>Чемпионаты</h3><span class="small muted">адрес выдаётся автоматически из названия</span></div>
-          ${tableToolbar('tenants', 'Название, адрес, организатор', [['', 'Все'], ['active', 'Активные'], ['trial', 'Пробные'], ['draft', 'Ждут оплаты'], ['expired', 'Истёкшие'], ['paused', 'Приостановлены']])}
+          ${tableToolbar('tenants', 'Название, адрес, организатор', [['', 'Все'], ['active', 'Активные'], ['trial', 'Пробные'], ['draft', 'Ждут оплаты'], ['expired', 'Истёкшие'], ['paused', 'Приостановлены'], ['unconfirmed', 'Не подтвердили']])}
           <div class="table-wrap"><table class="table">
-            <thead><tr><th>Чемпионат</th><th>Адрес</th><th>Организатор</th><th>Тариф</th><th>Статус</th><th></th></tr></thead>
+            <thead><tr><th>Чемпионат</th><th>Адрес</th><th>Организатор</th><th>Приглашение</th><th>Тариф</th><th>Статус</th><th></th></tr></thead>
             <tbody data-rows="tenants">${rows}</tbody>
           </table></div>
           <div class="table-empty hide" data-empty="tenants">Ничего не найдено.</div>
@@ -120,7 +125,8 @@ export function tenant(id) {
             <div class="field"><label for="tn-org">Имя</label><input id="tn-org" class="input" value="${esc(t.orgName)}" data-change="tenant-field" data-id="${t.id}" data-key="orgName"></div>
             <div class="field"><label for="tn-email">Почта</label><input id="tn-email" class="input" type="email" value="${esc(t.orgEmail)}" data-change="tenant-field" data-id="${t.id}" data-key="orgEmail"></div>
           </div>
-          <div class="row"><button class="btn s" data-action="tenant-invite" data-id="${t.id}">Отправить ссылку для входа ещё раз</button></div>
+          <div class="row-between"><span class="row" style="gap:8px"><span class="small muted">Приглашение:</span>${inviteCell(t)}</span>${!t.invite || t.invite.confirmed ? `<button class="btn s" data-action="tenant-invite" data-id="${t.id}">Отправить ссылку для входа ещё раз</button>` : ''}</div>
+          <p class="xs muted">Приглашение подтверждается первым входом организатора по ссылке из письма. Пока оно не подтверждено, чемпионат не настраивается.${t.invite && !t.invite.confirmed ? ` <button class="btn xs ghost" data-action="tenant-confirm" data-id="${t.id}">Демо: организатор вошёл</button>` : ''}</p>
         </section>
         <section class="card stack">
           <h3>Чемпионат</h3>
@@ -138,7 +144,7 @@ export function tenant(id) {
           <div class="row-between small"><span class="muted">Статус</span>${statusChip(t)}</div>
           <p class="xs muted">После окончания срока кабинеты закрываются, публичная таблица результатов остаётся открытой.</p>
         </section>
-        ${t.real ? '' : `<section class="card stack"><h3>Удалить</h3><p class="small muted">Убирает чемпионат из списка. В настоящей системе данные уйдут в архив на 90 дней.</p><button class="btn s danger" data-action="tenant-delete" data-id="${t.id}">Удалить чемпионат</button></section>`}
+        <section class="card stack"><h3>Удалить</h3><p class="small muted">${t.real ? 'Демо-чемпионат удалить нельзя: на нём держится вся демонстрация.' : 'Убирает чемпионат и доступ организатора. В настоящей системе данные уйдут в архив на 90 дней, письмо организатору уйдёт автоматически.'}</p>${t.real ? '' : `<button class="btn s danger" data-action="tenant-delete" data-id="${t.id}">Удалить чемпионат</button>`}</section>
       </aside>
     </div>`;
   return shell('owner', body);
@@ -158,7 +164,22 @@ export const changes = {
 };
 
 export const actions = {
-  'tenant-invite': () => toast('Письмо со ссылкой для входа отправлено (в демо — условно)'),
+  'tenant-invite': (el) => {
+    const t = (st().tenants || []).find((x) => x.id === el.dataset.id);
+    if (!t) return;
+    t.invite = { confirmed: !!t.invite?.confirmed, sentAt: Date.now(), resent: (t.invite?.resent || 0) + 1 };
+    save();
+    toast(`Письмо отправлено: ${t.orgEmail}`);
+    rerender();
+  },
+  'tenant-confirm': (el) => {
+    const t = (st().tenants || []).find((x) => x.id === el.dataset.id);
+    if (!t) return;
+    t.invite = { ...(t.invite || {}), confirmed: true, confirmedAt: Date.now() };
+    save();
+    toast('Приглашение подтверждено');
+    rerender();
+  },
   'tenant-delete': (el) => {
     const s = st();
     const t = (s.tenants || []).find((x) => x.id === el.dataset.id);
@@ -195,9 +216,9 @@ export const forms = {
     s.tenants = s.tenants || [];
     if (s.tenants.some((t) => t.slug === slug)) { toast('Такой адрес уже занят'); return; }
     if (s.ownerPreset === 'empty') s.ownerPreset = 'all';
-    s.tenants.unshift({ added: true, id: 't' + Date.now().toString(36), name: d.name.trim(), slug, orgName: (d.orgName || '').trim(), orgEmail: (d.orgEmail || '').trim(), plan: d.plan || 'trial', until: (d.until || '').trim() || 'не задано', status: d.plan === 'trial' ? 'trial' : 'draft', note: 'Приглашение отправлено, чемпионат ещё не настроен' });
+    s.tenants.unshift({ added: true, id: 't' + Date.now().toString(36), name: d.name.trim(), slug, orgName: (d.orgName || '').trim(), orgEmail: (d.orgEmail || '').trim(), plan: d.plan || 'trial', until: (d.until || '').trim() || 'не задано', status: d.plan === 'trial' ? 'trial' : 'draft', note: 'Приглашение отправлено, чемпионат ещё не настроен', invite: { confirmed: false, sentAt: Date.now(), resent: 0 } });
     save();
-    toast(`Доступ создан: ${slug}.apexchamp.beauty`);
+    toast(`Доступ создан, приглашение отправлено на ${(d.orgEmail || '').trim()}`);
     rerender();
   },
 };

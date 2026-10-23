@@ -339,10 +339,10 @@ export function seed() {
     sheets,
     prizes: PRIZES.map(([code, judgeId], i) => ({ id: 'pr' + (i + 1), code, judgeId })),
     tenants: [
-      { id: 't1', real: true, name: 'Lash & Brow Cup 2026', slug: 'lashbrowcup', orgName: 'Мария Т.', orgEmail: 'org@lashbrowcup.example', plan: 'pro', until: '31 декабря 2026', status: 'active' },
-      { id: 't2', name: 'Мисс Мышь 2022', slug: 'miss-mysh-2022', orgName: 'Ольга К.', orgEmail: 'olga@example.com', plan: 'start', until: '31 декабря 2022', status: 'expired', note: 'Архив: 84 работы, 9 номинаций' },
-      { id: 't3', name: 'Brow Battle Минск 2027', slug: 'brow-battle-minsk', orgName: 'Елена А.', orgEmail: 'elena@example.com', plan: 'start', until: 'после оплаты', status: 'draft', note: 'Организатор приглашён, ждём оплату' },
-      { id: 't4', name: 'Nail Olymp Online', slug: 'nail-olymp', orgName: 'Дарья В.', orgEmail: 'daria@example.com', plan: 'trial', until: '15 ноября 2026', status: 'trial', note: 'Пробный период, 12 работ' },
+      { id: 't1', real: true, name: 'Lash & Brow Cup 2026', slug: 'lashbrowcup', orgName: 'Мария Т.', orgEmail: 'org@lashbrowcup.example', plan: 'pro', until: '31 декабря 2026', status: 'active', invite: { confirmed: true } },
+      { id: 't2', name: 'Мисс Мышь 2022', slug: 'miss-mysh-2022', orgName: 'Ольга К.', orgEmail: 'olga@example.com', plan: 'start', until: '31 декабря 2022', status: 'expired', note: 'Архив: 84 работы, 9 номинаций', invite: { confirmed: true } },
+      { id: 't3', name: 'Brow Battle Минск 2027', slug: 'brow-battle-minsk', orgName: 'Елена А.', orgEmail: 'elena@example.com', plan: 'start', until: 'после оплаты', status: 'draft', note: 'Организатор приглашён, ждём оплату', invite: { confirmed: false, sentAt: 1792600000000, resent: 1 } },
+      { id: 't4', name: 'Nail Olymp Online', slug: 'nail-olymp', orgName: 'Дарья В.', orgEmail: 'daria@example.com', plan: 'trial', until: '15 ноября 2026', status: 'trial', note: 'Пробный период, 12 работ', invite: { confirmed: true } },
     ],
     audit: [],
   };
