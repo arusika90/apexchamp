@@ -27,7 +27,13 @@ h3 { font-size: var(--fs-h3); font-weight: 700; }
 .logo-mark svg { width: 18px; height: 18px; }
 .wordmark { font-weight: 800; font-size: 20px; letter-spacing: -.6px; text-transform: lowercase; color: var(--ink); }
 .wordmark span { color: var(--brand); }
-.champ-chip { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: var(--r-s); background: var(--peach); color: var(--brand-ink); font-size: var(--fs-s); font-weight: 700; }
+.champ-chip { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 6px; border-radius: var(--r-s); background: var(--peach); color: var(--brand-ink); font-size: var(--fs-s); font-weight: 700; }
+.champ-chip.no-logo { padding-left: 12px; }
+.champ-logo { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; background: #fff; }
+.logo-preview { width: 96px; height: 96px; border-radius: 24px; object-fit: cover; background: var(--fill); }
+.logo-fallback { width: 96px; height: 96px; border-radius: 24px; background: var(--brand); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 28px; }
+.file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.file-btn { position: relative; }
 .nav { display: flex; gap: 4px; flex-wrap: wrap; }
 .nav a { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 12px; color: var(--ink); font-weight: 600; font-size: var(--fs-m); }
 .nav a:hover { background: var(--fill); }
@@ -176,7 +182,7 @@ textarea.input { height: auto; min-height: 120px; padding: 14px; line-height: 1.
 .actionbar-in { max-width: var(--page-w); margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
 /* Пароль на вход */
-.gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--brand); }
+.gate { min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 12vh 24px 48px; background: var(--brand); }
 .gate-card { width: 100%; max-width: 420px; background: var(--card); border-radius: var(--r-xl); padding: 32px; display: flex; flex-direction: column; gap: 20px; box-shadow: var(--shadow-2); }
 
 /* Всплывающее окно */
@@ -203,8 +209,7 @@ body.modal-open { overflow: hidden; }
 /* Вход по ролям */
 .login { min-height: 100vh; display: flex; flex-direction: column; }
 .login-in { max-width: 1216px; margin: 0 auto; padding: 48px 24px 80px; display: flex; flex-direction: column; gap: 28px; width: 100%; }
-.role-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
-@media (max-width: 1100px) { .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .role-grid { grid-template-columns: minmax(0, 1fr); } }
 .role { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: var(--r-l); background: var(--card); border: 2px solid transparent; cursor: pointer; text-align: left; }
@@ -225,6 +230,14 @@ body.modal-open { overflow: hidden; }
 .role .persona { background: var(--fill); }
 .role .persona:hover { background: var(--peach); }
 
+/* Подвал */
+.footer { margin-top: auto; border-top: 1px solid var(--line); background: var(--card); }
+.footer-in { max-width: var(--page-w); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: var(--fs-s); }
+.footer-in > .col { max-width: 420px; }
+.footer-in nav a { color: var(--ink); font-weight: 600; }
+.footer-in nav a:hover { color: var(--brand); }
+.login .footer { margin: 24px -24px -80px; }
+
 /* Дизайн-система */
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .swatch { border-radius: var(--r-m); overflow: hidden; border: 1px solid var(--line); background: var(--card); }
@@ -238,6 +251,14 @@ body.modal-open { overflow: hidden; }
 .ds-nav a { display: flex; align-items: center; height: 40px; padding: 0 12px; border-radius: 10px; color: var(--ink); font-weight: 600; font-size: 14px; }
 .ds-nav a:hover { background: var(--card); }
 code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--fill); padding: 2px 6px; border-radius: 6px; }
+
+/* Средняя ширина: шапка в две строки — логотип и пользователь, ниже разделы */
+@media (max-width: 1080px) {
+  .topbar-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 4px; padding: 8px 24px; }
+  .champ-chip { display: none; }
+  .nav { grid-column: 1 / -1; }
+  .user { margin-left: 0; justify-self: end; }
+}
 
 /* Телефон */
 @media (max-width: 640px) {

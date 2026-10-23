@@ -9,6 +9,7 @@ import * as results from './views/results.js';
 import * as org from './views/org.js';
 import * as judge from './views/judge.js';
 import * as participant from './views/participant.js';
+import * as owner from './views/owner.js';
 
 const ROUTES = [
   { p: 'roles', v: roles.render, t: 'Выбор роли' },
@@ -16,6 +17,7 @@ const ROUTES = [
   { p: 'design', v: design.render, t: 'Дизайн-система' },
   { p: 'results', v: results.render, t: 'Результаты' },
   { p: 'org', v: org.dashboard, role: 'org', t: 'Обзор' },
+  { p: 'org/settings', v: org.settings, role: 'org', t: 'Чемпионат' },
   { p: 'org/nominations', v: org.nominations, role: 'org', t: 'Номинации' },
   { p: 'org/nomination/:id', v: org.nomination, role: 'org', t: 'Номинация' },
   { p: 'org/judges', v: org.judges, role: 'org', t: 'Судьи' },
@@ -25,6 +27,7 @@ const ROUTES = [
   { p: 'judge', v: judge.list, role: 'judge', t: 'Мои работы' },
   { p: 'judge/work/:code', v: judge.sheet, role: 'judge', t: 'Ведомость' },
   { p: 'me', v: participant.home, role: 'part', t: 'Мои работы' },
+  { p: 'owner', v: owner.console_, role: 'owner', t: 'Платформа' },
 ];
 
 function match(path) {
@@ -77,6 +80,7 @@ const common = {
   'login-persona': (el) => {
     const role = el.dataset.role;
     if (el.dataset.stage) st().championship.stage = el.dataset.stage;
+    if (el.dataset.preset) st().ownerPreset = el.dataset.preset;
     st().session = { role, id: el.dataset.user || null };
     ui.roleModal = false;
     ui.expanded = {};
@@ -105,13 +109,13 @@ const common = {
     go('#/roles');
   },
   impersonate: (el) => {
-    st().session = { role: el.dataset.role, id: el.dataset.id, by: 'org' };
+    st().session = { role: el.dataset.role, id: el.dataset.id || null, by: st().session?.role === 'owner' ? 'owner' : 'org' };
     save();
     toast('Вы смотрите кабинет глазами пользователя');
     go('#/' + roleHome(el.dataset.role));
   },
   'back-to-org': () => {
-    st().session = { role: 'org' };
+    st().session = { role: st().session?.by === 'owner' ? 'owner' : 'org' };
     ui.roleModal = false;
     save();
     go('#/org');
@@ -152,10 +156,10 @@ const FORMS = {
   },
 };
 
-Object.assign(FORMS, participant.forms);
-const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions };
+Object.assign(FORMS, participant.forms, owner.forms);
+const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
 const CHANGES = { ...org.changes, ...judge.changes };
-const INPUTS = { ...results.inputs, ...judge.inputs };
+const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs };
 
 function start() {
   load();

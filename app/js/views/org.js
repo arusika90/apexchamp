@@ -84,6 +84,7 @@ export function dashboard() {
         </section>
         <section class="card stack" style="gap:10px">
           <h3>Быстрые действия</h3>
+          <a class="list-item" href="#/org/settings"><b>Название, сроки, логотип</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/judges"><b>Судьи и прогресс</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/participants"><b>Участники с именами</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/results"><b>Предпросмотр результатов</b><span class="muted">${I.right}</span></a>
@@ -91,6 +92,49 @@ export function dashboard() {
       </aside>
     </div>`;
   return shell('org', body);
+}
+
+// ---------- Чемпионат: название, сроки, логотип ----------
+export function settings() {
+  const s = st();
+  const c = s.championship;
+  const field = (id, label, key, hint = '') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" class="input" value="${esc(c[key] || '')}" data-change="champ-field" data-key="${key}">${hint ? `<span class="xs muted">${hint}</span>` : ''}</div>`;
+  const body = `
+    <div class="page-head"><div class="col" style="gap:8px"><h1>Чемпионат</h1><p class="muted">Название, сроки и логотип. Логотип виден в шапке, на публичной странице результатов и в дипломах.</p></div></div>
+    <div class="two-col">
+      <div class="main stack">
+        <section class="card stack">
+          <h3>Название</h3>
+          <div class="grid-2">
+            ${field('c-name', 'Название чемпионата', 'name')}
+            ${field('c-short', 'Короткий код', 'short', 'До трёх букв, показывается вместо логотипа, пока его нет')}
+          </div>
+        </section>
+        <section class="card stack">
+          <h3>Сроки</h3>
+          <div class="grid-3">
+            ${field('c-submit', 'Приём работ до', 'submitUntil')}
+            ${field('c-deadline', 'Судейство до', 'deadline')}
+            ${field('c-announce', 'Оглашение', 'announce')}
+          </div>
+          <p class="xs muted">Пока это текст для участников и судей. С сервером появятся настоящие даты и автоматическое закрытие этапов.</p>
+        </section>
+      </div>
+      <aside class="side">
+        <section class="card stack" style="gap:16px">
+          <h3>Логотип</h3>
+          <div class="row" style="gap:16px">
+            ${c.logo ? `<img class="logo-preview" src="${c.logo}" alt="Логотип чемпионата">` : `<span class="logo-fallback">${esc(c.short || 'LB')}</span>`}
+            <div class="col" style="gap:8px">
+              <label class="btn s primary file-btn">${I.plus}<span>${c.logo ? 'Заменить' : 'Загрузить'}</span><input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-change="champ-logo"></label>
+              ${c.logo ? '<button class="btn s ghost" data-action="champ-logo-remove">Убрать</button>' : ''}
+            </div>
+          </div>
+          <p class="xs muted">PNG, JPG, SVG или WebP, лучше квадратный. Картинка уменьшается до 256 px и хранится в этом браузере.</p>
+        </section>
+      </aside>
+    </div>`;
+  return shell('org/settings', body);
 }
 
 // ---------- Номинации ----------
@@ -422,6 +466,7 @@ function critName(n, critId) {
 
 export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
+  'champ-logo-remove': () => { st().championship.logo = null; save(); toast('Логотип убран'); rerender(); },
   'mark-paid': (el) => { const p = partById(el.dataset.id); if (p) { p.paid = true; save(); toast(`Оплата отмечена: ${p.name}`); rerender(); } },
   remind: (el) => toast(el.dataset.who === 'all' ? 'Напоминание отправлено всем, кто не закончил' : `Напоминание отправлено: ${el.dataset.who}`),
   'demo-only': () => toast('Импорт появится вместе с сервером — сейчас это демо'),
@@ -457,7 +502,56 @@ export const actions = {
   },
 };
 
+function fitLogo(file) {
+  return new Promise((resolve, reject) => {
+    if (file.type === 'image/svg+xml') {
+      if (file.size > 300 * 1024) { reject(new Error('SVG больше 300 КБ')); return; }
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = () => reject(new Error('Не удалось прочитать файл'));
+      fr.readAsDataURL(file);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const S = 256;
+      const cv = document.createElement('canvas');
+      cv.width = S; cv.height = S;
+      const ctx = cv.getContext('2d');
+      const k = Math.max(S / img.width, S / img.height);
+      const w = img.width * k; const h = img.height * k;
+      ctx.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL('image/png'));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Это не картинка')); };
+    img.src = url;
+  });
+}
+
 export const changes = {
+  'champ-field': (el) => {
+    const key = el.dataset.key;
+    const v = el.value.trim();
+    if (!v) { toast('Поле не может быть пустым'); rerender(); return; }
+    st().championship[key] = key === 'short' ? v.slice(0, 3).toUpperCase() : v;
+    save();
+    toast('Сохранено');
+    rerender();
+  },
+  'champ-logo': async (el) => {
+    const file = el.files && el.files[0];
+    if (!file) return;
+    try {
+      st().championship.logo = await fitLogo(file);
+      save();
+      toast('Логотип загружен');
+      rerender();
+    } catch (e) {
+      toast(e.message || 'Не удалось загрузить логотип');
+    }
+  },
   'nom-field': (el) => {
     const n = nomById(el.dataset.nom);
     const f = el.dataset.field;

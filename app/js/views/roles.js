@@ -1,8 +1,8 @@
 // Вход по ролям: можно посмотреть систему глазами любой роли, выйти и войти в другую.
 import { st, sessionUser, roleHome } from '../store.js';
 import { esc, I } from '../ui.js';
-import { ROLE_NAME, logoMark, wordmark, shell, personaButton } from './common.js';
-import { PERSONAS, currentState } from '../personas.js';
+import { ROLE_NAME, logoMark, wordmark, shell, personaButton, footer } from './common.js';
+import { PERSONAS, TIPS, currentState } from '../personas.js';
 import { CATEGORIES } from '../ui.js';
 
 // Регистрация нового участника. Без пароля: вход пока по выбору роли, настоящая авторизация придёт с сервером.
@@ -46,6 +46,7 @@ export function render() {
       <h3>${title}</h3>
       <p class="small muted">${text}</p>
       <div class="persona-list">${PERSONAS[r].map((pr) => personaButton(r, pr)).join('')}</div>
+      <p class="xs" style="color:var(--brand-ink);background:var(--peach);padding:10px 12px;border-radius:10px;line-height:1.45"><b>Попробуйте.</b> ${TIPS[r]}</p>
       ${extra}
     </div>`;
 
@@ -69,26 +70,15 @@ export function render() {
         ${card('part', 'var(--ok-bg)', 'var(--ok)', I.user, 'Участник', 'Подаёт работы, потом видит проценты, место и комментарии.', '<a class="small b" href="#/register">Нет аккаунта? Зарегистрироваться</a>')}
         ${card('guest', 'var(--fill)', 'var(--ink)', I.globe, 'Гость', 'Публичная таблица без имён участников.')}
         ${card('designer', 'var(--peach)', 'var(--brand)', I.palette, 'Дизайнер', 'Библиотека дизайн-системы.')}
+        ${card('owner', 'var(--lemon)', 'var(--brand-ink)', I.star, 'Владелец платформы', 'Все чемпионаты, организаторы и доступы. Продаёт аренду платформы.')}
       </div>
 
-      <div class="grid-2">
-        <section class="card stack">
-          <h3>Служебное</h3>
-          <p class="small muted">Текущий этап: <b style="color:var(--ink)">${{ submission: 'приём работ', judging: 'судейство', published: 'итоги опубликованы' }[s.championship.stage]}</b>. Вернуть все оценки, работы и настройки к исходным:</p>
-          <button class="btn s" style="align-self:flex-start" data-action="reset-data">Сбросить демо-данные</button>
-        </section>
-        <section class="card peach stack">
-          <h3>Что попробовать</h3>
-          <ol class="small" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px">
-            <li><b>Участник · до подачи</b>: подайте работу, отметьте фото по ракурсам, заявитесь на Гран-при.</li>
-            <li><b>Судья · в процессе</b>: оцените ВК-301, отправьте, посмотрите, как растёт прогресс.</li>
-            <li><b>Организатор · судейство</b>: на обзоре видно, кто не закончил. Откройте работу 209 с большим разбросом и поправьте оценку.</li>
-            <li><b>Организатор → Места и Гран-при</b>: переключите правило с порогов на рейтинг.</li>
-            <li><b>Участник · победа</b>: Гран-при, первые места, комментарии судей.</li>
-          </ol>
-        </section>
-      </div>
+      <section class="card row-between" style="padding:16px 24px">
+        <span class="small muted">Текущий этап: <b style="color:var(--ink)">${{ submission: 'приём работ', judging: 'судейство', published: 'итоги опубликованы' }[s.championship.stage]}</b>. Данные живут в этом браузере.</span>
+        <button class="btn s" data-action="reset-data">Сбросить демо-данные</button>
+      </section>
     </div>
+    ${footer()}
   </div>`;
 }
 

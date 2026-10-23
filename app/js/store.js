@@ -119,6 +119,7 @@ export const workStatus = (w) => w.status || 'submitted';
 export const ORG_USER = { id: 'org', name: 'Организатор', initials: 'ОР' };
 export const GUEST_USER = { id: 'guest', name: 'Гость', initials: 'Г' };
 export const DESIGNER_USER = { id: 'designer', name: 'Дизайнер', initials: 'ДЗ' };
+export const OWNER_USER = { id: 'owner', name: 'Владелец ApexChamp', initials: 'AC' };
 
 export function sessionUser() {
   const s = state.session;
@@ -128,9 +129,10 @@ export function sessionUser() {
   if (s.role === 'part') return partById(s.id) || null;
   if (s.role === 'guest') return GUEST_USER;
   if (s.role === 'designer') return DESIGNER_USER;
+  if (s.role === 'owner') return OWNER_USER;
   return null;
 }
 
 export function roleHome(role) {
-  return { org: 'org', judge: 'judge', part: 'me', guest: 'results', designer: 'design' }[role] || 'roles';
+  return { org: 'org', judge: 'judge', part: 'me', guest: 'results', designer: 'design', owner: 'owner' }[role] || 'roles';
 }

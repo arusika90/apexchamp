@@ -84,7 +84,7 @@ export function render() {
   const champHead = `
     <section class="card row-between" style="padding:20px 24px">
       <div class="row" style="gap:16px">
-        <span style="width:56px;height:56px;border-radius:16px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">${esc(s.championship.short)}</span>
+        ${s.championship.logo ? `<img src="${s.championship.logo}" alt="Логотип чемпионата" style="width:56px;height:56px;border-radius:16px;object-fit:cover;background:#fff">` : `<span style="width:56px;height:56px;border-radius:16px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">${esc(s.championship.short)}</span>`}
         <div class="col" style="gap:2px"><h2>${esc(s.championship.name)}</h2><span class="small muted">${pub ? `Результаты объявлены ${esc(s.championship.announce)}` : `Оглашение ${esc(s.championship.announce)}`}</span></div>
       </div>
       ${pub || role === 'org' ? `<label class="row" style="gap:0;position:relative"><span class="hide">Поиск по номеру работы</span><input class="input" style="width:300px;max-width:100%;padding-left:42px" type="search" placeholder="Номер работы, например ВК-303" data-input="results-search" aria-label="Поиск по номеру работы"><span style="position:absolute;left:14px;top:15px;color:var(--muted)">${I.search}</span></label>` : ''}
