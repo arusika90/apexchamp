@@ -44,7 +44,7 @@ export function header(active) {
     <div class="topbar-in">
       ${inChamp(role, active) ? `<a class="logo" href="#/${role ? roleHome(role) : 'results'}">${champBrand()}</a>` : `<a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>`}
       <nav class="nav" aria-label="Разделы">${navHtml}</nav>
-      <div class="user">${nav.length ? `<button type="button" class="btn icon burger" data-action="nav-open" aria-label="Меню" aria-expanded="${ui.navOpen ? 'true' : 'false'}">${I.menu}</button>` : ''}${userHtml}</div>
+      <div class="user">${userHtml}${nav.length ? `<button type="button" class="btn icon burger" data-action="nav-open" aria-label="Меню" aria-expanded="${ui.navOpen ? 'true' : 'false'}">${I.menu}</button>` : ''}</div>
     </div>
   </header>`;
 }
