@@ -206,7 +206,7 @@ body.modal-open { overflow: hidden; }
 
 /* Вход по ролям */
 .login { min-height: 100vh; display: flex; flex-direction: column; }
-.login-in { max-width: 1216px; margin: 0 auto; padding: 48px 24px 80px; display: flex; flex-direction: column; gap: 28px; width: 100%; }
+.login-in { max-width: 1216px; margin: 0 auto; padding: 20px 24px 80px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
 .role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .role-grid { grid-template-columns: minmax(0, 1fr); } }
