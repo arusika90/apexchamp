@@ -75,6 +75,7 @@ export function addParticipant(d) {
     email: String(d.email || '').trim(),
     cat: d.cat || 'junior',
     free: false, gpWorks: [], initials: initialsOf(name), registered: Date.now(),
+    invite: { sentAt: Date.now(), confirmed: false, resent: 0 },
   });
   save();
   return id;
@@ -84,7 +85,7 @@ export function addJudge(d) {
   const id = 'j' + Date.now().toString(36);
   const name = String(d.name || '').trim();
   const [a, b] = name.split(/\s+/);
-  state.judges.push({ id, name, email: String(d.email || '').trim(), country: String(d.country || '').trim(), initials: initialsOf(name), short: b ? `${a} ${b[0]}.` : a });
+  state.judges.push({ id, name, email: String(d.email || '').trim(), country: String(d.country || '').trim(), initials: initialsOf(name), short: b ? `${a} ${b[0]}.` : a, invite: { sentAt: Date.now(), confirmed: false, resent: 0 } });
   for (const n of state.nominations) if ((d.nomIds || []).includes(n.id) && !n.judgeIds.includes(id)) n.judgeIds.push(id);
   save();
   return id;
@@ -129,6 +130,20 @@ export function removeWork(code) {
 }
 
 export const workStatus = (w) => w.status || 'submitted';
+
+// Вход по приглашению: первый вход подтверждает аккаунт.
+export function confirmInvite(role, id) {
+  const u = role === 'judge' ? judgeById(id) : role === 'part' ? partById(id) : null;
+  if (u && u.invite && !u.invite.confirmed) { u.invite.confirmed = true; u.invite.confirmedAt = Date.now(); save(); }
+}
+
+export function resendInvite(role, id) {
+  const u = role === 'judge' ? judgeById(id) : partById(id);
+  if (!u) return null;
+  u.invite = { ...(u.invite || {}), sentAt: Date.now(), resent: (u.invite?.resent || 0) + 1, confirmed: !!u.invite?.confirmed };
+  save();
+  return u;
+}
 
 export const ORG_USER = { id: 'org', name: 'Организатор', initials: 'ОР' };
 export const GUEST_USER = { id: 'guest', name: 'Гость', initials: 'Г' };

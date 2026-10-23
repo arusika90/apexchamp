@@ -1,7 +1,7 @@
 // Кабинет организатора: видит и правит всё.
-import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant, addJudge } from '../store.js';
+import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant, addJudge, resendInvite } from '../store.js';
 import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, progress, placeSummary, grandPrix } from '../scoring.js';
-import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES, tableToolbar } from '../ui.js';
+import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES, tableToolbar, inviteChip } from '../ui.js';
 import { shell, stageChip } from './common.js';
 import { THEMES, BACKGROUNDS, themeVars } from '../theme.js';
 
@@ -81,6 +81,7 @@ export function dashboard() {
             <span class="small muted">от ${num(Math.min(...r.totals))} до ${num(Math.max(...r.totals))} из ${r.max}. Посмотрите ведомости.</span>
           </a>`).join('')}
           ${recusals.map(({ w, j }) => `<a class="attention" style="color:var(--ink)" href="${href('org', 'work', w.code)}"><b>Отвод: ${esc(j?.short || '')}</b><span class="small muted">работа ${esc(w.code)} · нужен другой судья или оценка без него</span></a>`).join('')}
+          ${(() => { const up = s.participants.filter((p) => p.invite && !p.invite.confirmed).length; const uj = s.judges.filter((j) => j.invite && !j.invite.confirmed).length; return up || uj ? `<a class="attention" style="color:var(--ink)" href="#/org/${uj ? 'judges' : 'participants'}"><b>Не подтвердили приглашение</b><span class="small muted">${uj ? `${uj} ${plural(uj, 'судья', 'судьи', 'судей')}` : ''}${uj && up ? ', ' : ''}${up ? `${up} ${plural(up, 'участник', 'участника', 'участников')}` : ''} · можно отправить письмо снова</span></a>` : ''; })()}
           ${!unfinished.length && !spread.length && !recusals.length ? '<p class="small muted">Всё в порядке.</p>' : ''}
         </section>
         <section class="card stack" style="gap:10px">
@@ -291,9 +292,10 @@ export function judges() {
     const x = judgeStats(j.id);
     const noms = s.nominations.filter((n) => n.judgeIds.includes(j.id));
     const total = x.assigned - x.recused;
-    return `<tr data-search="${esc((j.name + ' ' + j.country + ' ' + noms.map((n) => n.name).join(' ')).toLowerCase())}" data-tags="${x.left ? 'todo' : 'done'} ${noms.map((n) => 'block-' + n.block).join(' ')}">
+    return `<tr data-search="${esc((j.name + ' ' + j.country + ' ' + noms.map((n) => n.name).join(' ')).toLowerCase())}" data-tags="${x.left ? 'todo' : 'done'} ${j.invite && !j.invite.confirmed ? 'unconfirmed' : 'confirmed'} ${noms.map((n) => 'block-' + n.block).join(' ')}">
       <td><div class="row" style="gap:10px"><span class="avatar" aria-hidden="true">${esc(j.initials)}</span><div><b>${esc(j.name)}</b><div class="xs muted">${esc(j.country)}</div></div></div></td>
       <td class="small">${noms.map((n) => esc(n.name)).join(', ') || '—'}</td>
+      <td>${inviteChip('judge', j)}</td>
       <td class="num">${x.sent} из ${total}${x.draft ? ` <span class="xs" style="color:var(--warn)">· ${x.draft} в черновике</span>` : ''}${x.recused ? ` <span class="xs muted">· ${x.recused} отвод</span>` : ''}</td>
       <td style="min-width:120px">${bar(total ? x.sent / total : 0, x.left ? 'warn' : 'ok')}</td>
       <td><div class="row" style="gap:6px;flex-wrap:nowrap">${x.left ? `<button class="btn xs" data-action="remind" data-who="${esc(j.short)}">Напомнить</button>` : '<span class="chip ok">готово</span>'}<button class="btn xs ghost" data-action="impersonate" data-role="judge" data-id="${j.id}">Войти как</button></div></td>
@@ -319,9 +321,9 @@ export function judges() {
       <div class="row"><button class="btn primary" type="submit">Создать судью</button></div>
     </form>` : ''}
     <section class="card flat">
-      ${tableToolbar('judges', 'Имя, страна, номинация', [['', 'Все'], ['todo', 'Не закончили'], ['done', 'Готово'], ['block-lash', 'Ресницы'], ['block-lami', 'Лами'], ['block-brows', 'Брови']])}
+      ${tableToolbar('judges', 'Имя, страна, номинация', [['', 'Все'], ['todo', 'Не закончили'], ['done', 'Готово'], ['unconfirmed', 'Не подтвердили'], ['block-lash', 'Ресницы'], ['block-lami', 'Лами'], ['block-brows', 'Брови']])}
       <div class="table-wrap"><table class="table">
-      <thead><tr><th>Судья</th><th>Номинации</th><th>Отправлено</th><th>Прогресс</th><th></th></tr></thead>
+      <thead><tr><th>Судья</th><th>Номинации</th><th>Приглашение</th><th>Отправлено</th><th>Прогресс</th><th></th></tr></thead>
       <tbody data-rows="judges">${rows}</tbody>
     </table></div><div class="table-empty hide" data-empty="judges">Ничего не найдено.</div></section>`;
   return shell('org/judges', body);
@@ -334,12 +336,13 @@ export function participants() {
     const works = s.works.filter((w) => w.pid === p.id);
     const cats = [...new Set(works.map((w) => w.cat))];
     const payTag = p.free ? 'free' : p.paid ? 'paid' : 'unpaid';
-    return `<tr data-search="${esc((p.name + ' ' + p.insta + ' ' + p.country + ' ' + works.map((w) => w.code).join(' ')).toLowerCase())}" data-tags="${cats.map((c) => 'cat-' + c).join(' ')} ${p.cat ? 'cat-' + p.cat : ''} ${payTag}">
+    return `<tr data-search="${esc((p.name + ' ' + p.insta + ' ' + p.country + ' ' + works.map((w) => w.code).join(' ')).toLowerCase())}" data-tags="${cats.map((c) => 'cat-' + c).join(' ')} ${p.cat ? 'cat-' + p.cat : ''} ${payTag} ${p.invite && !p.invite.confirmed ? 'unconfirmed' : 'confirmed'}">
       <td><b>${esc(p.name)}</b><div class="xs muted">${esc(p.insta)}</div></td>
       <td class="small">${esc(p.country)}</td>
       <td class="small">${works.map((w) => `<a href="${href('org', 'work', w.code)}">${esc(w.code)}</a>${(w.status || 'submitted') === 'draft' ? ' <span class="xs muted">черновик</span>' : ''}`).join(', ') || '<span class="muted">—</span>'}</td>
       <td>${cats.map((c) => `<span class="chip">${catName(c)}</span>`).join(' ') || (p.cat ? `<span class="chip">${catName(p.cat)}</span>` : '')}</td>
       <td>${p.free ? '<span class="chip peach">бесплатно</span>' : p.paid ? '<span class="chip ok">оплачено</span>' : `<button class="btn xs" data-action="mark-paid" data-id="${p.id}">Отметить оплату</button>`}</td>
+      <td>${inviteChip('part', p)}</td>
       <td class="small">${(p.gpWorks || []).length ? p.gpWorks.map(esc).join(' · ') : '<span class="muted">—</span>'}</td>
       <td><button class="btn xs ghost" data-action="impersonate" data-role="part" data-id="${p.id}">Войти как</button></td>
     </tr>`;
@@ -364,9 +367,9 @@ export function participants() {
       <div class="row"><button class="btn primary" type="submit">Создать участника</button></div>
     </form>` : ''}
     <section class="card flat">
-      ${tableToolbar('participants', 'Имя, инстаграм, страна, номер работы', [['', 'Все'], ['cat-junior', 'Юниоры'], ['cat-master', 'Мастера'], ['cat-expert', 'Эксперты'], ['unpaid', 'Не оплатили'], ['free', 'Бесплатно']])}
+      ${tableToolbar('participants', 'Имя, инстаграм, страна, номер работы', [['', 'Все'], ['cat-junior', 'Юниоры'], ['cat-master', 'Мастера'], ['cat-expert', 'Эксперты'], ['unpaid', 'Не оплатили'], ['unconfirmed', 'Не подтвердили']])}
       <div class="table-wrap"><table class="table">
-      <thead><tr><th>Участник</th><th>Страна</th><th>Работы</th><th>Категория</th><th>Оплата</th><th>Гран-при</th><th></th></tr></thead>
+      <thead><tr><th>Участник</th><th>Страна</th><th>Работы</th><th>Категория</th><th>Оплата</th><th>Приглашение</th><th>Гран-при</th><th></th></tr></thead>
       <tbody data-rows="participants">${rows}</tbody>
     </table></div><div class="table-empty hide" data-empty="participants">Ничего не найдено.</div></section>`;
   return shell('org/participants', body);
@@ -528,6 +531,7 @@ export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
   'part-new': () => { ui.newParticipant = true; rerender(); },
   'judge-new': () => { ui.newJudge = true; rerender(); },
+  'invite-resend': (el) => { const u = resendInvite(el.dataset.role, el.dataset.id); if (u) toast(`Приглашение отправлено ещё раз: ${u.email || u.name}`); rerender(); },
   'judge-new-link': () => { ui.newJudge = true; location.hash = '#/org/judges'; },
   'judge-cancel': () => { ui.newJudge = false; rerender(); },
   'part-new-link': () => { ui.newParticipant = true; location.hash = '#/org/participants'; },

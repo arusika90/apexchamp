@@ -67,6 +67,13 @@ export function tableToolbar(id, placeholder, chips = []) {
   </div>`;
 }
 
+// Статус приглашения: подтверждён, ожидает, отправить снова.
+export function inviteChip(role, u) {
+  if (!u.invite) return '<span class="chip ok" title="Аккаунт из демо-данных">подтверждено</span>';
+  if (u.invite.confirmed) return `<span class="chip ok" title="Вошёл по ссылке">${I.check.replace('<svg', '<svg width="12" height="12"')}подтверждено</span>`;
+  return `<span class="row" style="gap:6px;flex-wrap:nowrap"><span class="chip warn" title="Письмо отправлено ${dateTime(u.invite.sentAt)}${u.invite.resent ? `, повторно ${u.invite.resent}` : ''}">ожидает</span><button class="btn xs" data-action="invite-resend" data-role="${role}" data-id="${u.id}">Отправить снова</button></span>`;
+}
+
 export function bar(frac, cls = '') {
   const w = Math.max(0, Math.min(1, frac || 0));
   return `<div class="bar ${cls}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(w * 100)}"><i style="width:${(w * 100).toFixed(1)}%"></i></div>`;

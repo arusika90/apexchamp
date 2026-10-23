@@ -1,7 +1,7 @@
 // Точка входа: пароль на вход, роутер на hash, делегирование событий, общие действия.
 import { gate } from './gate.js';
 import { applyTheme, resetTheme } from './theme.js';
-import { load, st, ui, save, roleHome, resetData, addParticipant, updateParticipant, sessionUser } from './store.js';
+import { load, st, ui, save, roleHome, resetData, addParticipant, updateParticipant, sessionUser, confirmInvite } from './store.js';
 import { toast, rerender } from './ui.js';
 import { ROLE_NAME } from './views/common.js';
 import * as roles from './views/roles.js';
@@ -110,6 +110,7 @@ const common = {
     st().session = { role, id: el.dataset.user || null };
     ui.roleModal = false;
     ui.expanded = {};
+    confirmInvite(role, el.dataset.user);
     ui.newWork = false;
     save();
     toast(`Вы вошли как ${ROLE_NAME[role].toLowerCase()}`);
@@ -123,6 +124,7 @@ const common = {
     if (role === 'part') id = document.getElementById('pick-part')?.value;
     st().session = { role, id };
     ui.roleModal = false;
+    confirmInvite(role, id);
     save();
     toast(`Вы вошли как ${ROLE_NAME[role].toLowerCase()}`);
     go('#/' + roleHome(role));
