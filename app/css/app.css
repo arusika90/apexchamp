@@ -256,8 +256,9 @@ code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-siz
 @media (max-width: 1080px) {
   .topbar-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; row-gap: 12px; padding: 16px 24px 14px; }
   .champ-chip { display: none; }
-  .nav { grid-column: 1 / -1; }
-  .user { margin-left: 0; justify-self: end; }
+  .topbar-in > .logo { grid-row: 1; grid-column: 1; }
+  .nav { grid-row: 2; grid-column: 1 / -1; }
+  .user { grid-row: 1; grid-column: 2; margin-left: 0; justify-self: end; }
 }
 
 /* Телефон */
