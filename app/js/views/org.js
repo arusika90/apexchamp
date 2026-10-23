@@ -111,6 +111,8 @@ export function settings() {
             ${field('c-name', 'Название чемпионата', 'name')}
             ${field('c-short', 'Короткий код', 'short', 'До трёх букв, показывается вместо логотипа, пока его нет')}
           </div>
+          <div class="field"><label for="c-about">Описание для гостей</label><textarea id="c-about" class="input" data-change="champ-field" data-key="about">${esc(c.about || '')}</textarea><span class="xs muted">Показывается на публичной странице до оглашения итогов.</span></div>
+          ${field('c-contact', 'Контакт для участников', 'contact', 'Инстаграм, телеграм или почта')}
         </section>
         <section class="card stack">
           <div class="row-between"><h3>Оформление</h3><span class="small muted">видят судьи, участники и гости этого чемпионата</span></div>
