@@ -1,7 +1,7 @@
 // Вход по ролям: можно посмотреть систему глазами любой роли, выйти и войти в другую.
-import { st, sessionUser, roleHome } from '../store.js';
+import { st, ui, sessionUser, roleHome } from '../store.js';
 import { esc, I } from '../ui.js';
-import { ROLE_NAME, logoMark, wordmark, shell, personaButton, footer, header } from './common.js';
+import { ROLE_NAME, logoMark, wordmark, shell, personaButton, footer, header, roleModal, navDrawer } from './common.js';
 import { PERSONAS, TIPS, currentState } from '../personas.js';
 import { CATEGORIES } from '../ui.js';
 
@@ -77,6 +77,6 @@ export function render() {
       </section>
     </div>
   </div>
-  ${footer()}`;
+  ${footer()}${ui.navOpen ? navDrawer('roles') : ''}${ui.roleModal ? roleModal() : ''}`;
 }
 

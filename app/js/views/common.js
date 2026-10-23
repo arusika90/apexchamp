@@ -38,7 +38,7 @@ export function header(active) {
   const userHtml = u
     ? `${impersonated ? `<button class="btn xs" style="background:var(--peach);color:var(--brand-ink)" data-action="back-to-org">${s.session.by === 'owner' ? 'Вернуться к платформе' : 'Вернуться к организатору'}</button>` : ''}
        <button type="button" class="avatar-btn" data-action="open-role-modal" title="${esc(u.name)} · ${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}. Нажмите, чтобы сменить роль или выйти" aria-label="${esc(u.name)}, ${ROLE_NAME[role]}. Сменить роль или выйти" aria-haspopup="dialog"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span></button>`
-    : `<button class="btn s primary" data-action="open-role-modal" aria-haspopup="dialog">Войти</button>`;
+    : `<button type="button" class="avatar-btn" data-action="open-role-modal" title="Роль не выбрана. Нажмите, чтобы войти" aria-label="Выбрать роль" aria-haspopup="dialog"><span class="avatar" style="background:var(--fill-2);color:var(--ink)">?</span></button>`;
   return `
   <header class="topbar">
     <div class="topbar-in">
