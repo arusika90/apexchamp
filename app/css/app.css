@@ -274,7 +274,8 @@ body.modal-open { overflow: hidden; }
 .type-row { display: flex; align-items: baseline; gap: 20px; padding: 10px 0; border-top: 1px solid var(--line); }
 .type-row .spec { width: 180px; flex: none; font-size: 12px; color: var(--muted); }
 .demo { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.ds-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 84px; }
+.ds-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 140px; align-self: flex-start; }
+@media (max-width: 1000px) { .ds-nav { display: none; } }
 .ds-nav a { display: flex; align-items: center; height: 40px; padding: 0 12px; border-radius: 10px; color: var(--ink); font-weight: 600; font-size: 14px; }
 .ds-nav a:hover { background: var(--card); }
 code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--fill); padding: 2px 6px; border-radius: 6px; }
@@ -304,7 +305,6 @@ code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-siz
   .hero { padding: 24px; }
   .actionbar-in { padding: 10px 16px; }
   .pill { width: 42px; height: 42px; }
-  .ds-nav { display: none; }
 }
 
 /* Утилиты */
