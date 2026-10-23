@@ -235,11 +235,13 @@ body.modal-open { overflow: hidden; }
 .role .persona:hover { background: var(--peach); }
 
 /* Подвал */
-.footer { margin-top: auto; border-top: 1px solid var(--line); background: var(--card); }
-.footer-in { max-width: var(--page-w); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: var(--fs-s); }
+.footer { margin-top: auto; background: var(--dark); color: #fff; }
+.footer-in { max-width: var(--page-w); margin: 0 auto; padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-size: var(--fs-s); }
 .footer-in > .col { max-width: 420px; }
-.footer-in nav a { color: var(--ink); font-weight: 600; }
-.footer-in nav a:hover { color: var(--brand); }
+.footer .wordmark { color: #fff; }
+.footer .muted { color: #B6BCC4; }
+.footer-in nav a { color: #fff; font-weight: 600; }
+.footer-in nav a:hover { color: var(--cta); }
 .login .footer { margin: 24px -24px -80px; }
 
 /* Дизайн-система */
