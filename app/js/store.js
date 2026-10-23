@@ -18,6 +18,7 @@ export const ui = {
   newWork: false,
   modalRole: null,
   newParticipant: false,
+  newJudge: false,
   tf: {},
 };
 
@@ -75,6 +76,16 @@ export function addParticipant(d) {
     cat: d.cat || 'junior',
     free: false, gpWorks: [], initials: initialsOf(name), registered: Date.now(),
   });
+  save();
+  return id;
+}
+
+export function addJudge(d) {
+  const id = 'j' + Date.now().toString(36);
+  const name = String(d.name || '').trim();
+  const [a, b] = name.split(/\s+/);
+  state.judges.push({ id, name, email: String(d.email || '').trim(), country: String(d.country || '').trim(), initials: initialsOf(name), short: b ? `${a} ${b[0]}.` : a });
+  for (const n of state.nominations) if ((d.nomIds || []).includes(n.id) && !n.judgeIds.includes(id)) n.judgeIds.push(id);
   save();
   return id;
 }

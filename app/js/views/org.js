@@ -1,5 +1,5 @@
 // Кабинет организатора: видит и правит всё.
-import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant } from '../store.js';
+import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant, addJudge } from '../store.js';
 import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, progress, placeSummary, grandPrix } from '../scoring.js';
 import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES, tableToolbar } from '../ui.js';
 import { shell, stageChip } from './common.js';
@@ -87,6 +87,7 @@ export function dashboard() {
           <h3>Быстрые действия</h3>
           <a class="list-item" href="#/org/settings"><b>Название, сроки, логотип</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/participants" data-action="part-new-link"><b>Добавить участника</b><span class="muted">${I.right}</span></a>
+          <a class="list-item" href="#/org/judges" data-action="judge-new-link"><b>Добавить судью</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/judges"><b>Судьи и прогресс</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/org/participants"><b>Участники с именами</b><span class="muted">${I.right}</span></a>
           <a class="list-item" href="#/results"><b>Предпросмотр результатов</b><span class="muted">${I.right}</span></a>
@@ -301,8 +302,22 @@ export function judges() {
   const body = `
     <div class="page-head">
       <div class="col" style="gap:8px"><h1>Судьи</h1><p class="muted">Кто сколько оценил. «Войти как» открывает кабинет судьи, вернуться можно кнопкой в шапке.</p></div>
-      <button class="btn" data-action="remind" data-who="all">${I.bell}<span>Напомнить всем, кто не закончил</span></button>
+      <div class="row"><button class="btn" data-action="remind" data-who="all">${I.bell}<span>Напомнить всем, кто не закончил</span></button><button class="btn primary" data-action="judge-new">${I.plus}<span>Добавить судью</span></button></div>
     </div>
+    ${ui.newJudge ? `
+    <form class="card stack" data-form="org-judge" style="border:2px solid var(--brand)">
+      <div class="row-between"><h3>Новый судья</h3><button class="btn xs ghost" type="button" data-action="judge-cancel">Отмена</button></div>
+      <div class="grid-3">
+        <div class="field req"><label for="nj-name">Имя и фамилия</label><input id="nj-name" name="name" class="input" required></div>
+        <div class="field req"><label for="nj-email">Почта</label><input id="nj-email" name="email" class="input" type="email" required placeholder="для входа в ведомости"></div>
+        <div class="field"><label for="nj-country">Страна <span class="opt">необязательно</span></label><input id="nj-country" name="country" class="input"></div>
+      </div>
+      <div class="field req"><span class="label">Номинации, которые судит</span>
+        ${s.blocks.map((b) => `<div class="row" style="gap:10px;padding:6px 0"><b class="small muted" style="width:150px">${esc(b.name)}</b>${s.nominations.filter((n) => n.block === b.id).map((n) => `<label class="check small"><input type="checkbox" name="nom" value="${n.id}">${esc(n.name)}</label>`).join('')}</div>`).join('')}
+        <span class="xs muted">Судья получит ссылку для входа и увидит только работы отмеченных номинаций, без имён участников. Номинации можно поменять позже на странице номинации.</span>
+      </div>
+      <div class="row"><button class="btn primary" type="submit">Создать судью</button></div>
+    </form>` : ''}
     <section class="card flat">
       ${tableToolbar('judges', 'Имя, страна, номинация', [['', 'Все'], ['todo', 'Не закончили'], ['done', 'Готово'], ['block-lash', 'Ресницы'], ['block-lami', 'Лами'], ['block-brows', 'Брови']])}
       <div class="table-wrap"><table class="table">
@@ -512,6 +527,9 @@ function critName(n, critId) {
 export const actions = {
   'org-nom-tab': (el) => { ui.orgNomTab = el.dataset.tab; rerender(); },
   'part-new': () => { ui.newParticipant = true; rerender(); },
+  'judge-new': () => { ui.newJudge = true; rerender(); },
+  'judge-new-link': () => { ui.newJudge = true; location.hash = '#/org/judges'; },
+  'judge-cancel': () => { ui.newJudge = false; rerender(); },
   'part-new-link': () => { ui.newParticipant = true; location.hash = '#/org/participants'; },
   'part-cancel': () => { ui.newParticipant = false; rerender(); },
   'theme-preset': (el) => { const c = st().championship; c.theme = { preset: el.dataset.id, brand: null, cta: null, bg: c.theme?.bg || 'theme' }; save(); toast('Тема применена'); rerender(); },
@@ -581,6 +599,17 @@ function fitLogo(file) {
 }
 
 export const forms = {
+  'org-judge': (form) => {
+    const d = Object.fromEntries(new FormData(form).entries());
+    const nomIds = [...form.querySelectorAll('input[name="nom"]:checked')].map((x) => x.value);
+    if (!d.name?.trim()) { toast('Укажите имя и фамилию'); form.name.focus(); return; }
+    if (!d.email?.trim()) { toast('Нужна почта: по ней судья войдёт'); form.email.focus(); return; }
+    if (!nomIds.length) { toast('Отметьте хотя бы одну номинацию'); return; }
+    const id = addJudge({ ...d, nomIds });
+    ui.newJudge = false;
+    toast(`Судья ${judgeById(id).name} добавлен, ссылка для входа отправлена`);
+    rerender();
+  },
   'org-participant': (form) => {
     const d = Object.fromEntries(new FormData(form).entries());
     if (!d.name?.trim()) { toast('Укажите имя и фамилию'); form.name.focus(); return; }
