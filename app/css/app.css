@@ -21,24 +21,26 @@ h3 { font-size: var(--fs-h3); font-weight: 700; }
 /* Каркас */
 .app { min-height: 100vh; display: flex; flex-direction: column; }
 .topbar { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
-.topbar-in { max-width: var(--page-w); margin: 0 auto; padding: 0 24px; min-height: 64px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--ink); letter-spacing: -.2px; }
+.topbar-in { max-width: var(--page-w); margin: 0 auto; padding: 0 24px; min-height: 64px; display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--ink); letter-spacing: -.2px; flex: none; }
 .logo-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--platform-brand); display: inline-flex; align-items: center; justify-content: center; }
 .logo-mark svg { width: 18px; height: 18px; }
 .wordmark { font-weight: 800; font-size: 20px; letter-spacing: -.6px; text-transform: lowercase; color: var(--ink); }
 .wordmark span { color: var(--platform-brand); }
 .champ-chip { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 6px; border-radius: var(--r-s); background: var(--peach); color: var(--brand-ink); font-size: var(--fs-s); font-weight: 700; }
 .champ-chip.no-logo { padding-left: 12px; }
+.champ-chip { flex: none; white-space: nowrap; }
 .champ-logo { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; background: #fff; }
 .logo-preview { width: 96px; height: 96px; border-radius: 24px; object-fit: cover; background: var(--fill); }
 .logo-fallback { width: 96px; height: 96px; border-radius: 24px; background: var(--brand); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 28px; }
 .file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .file-btn { position: relative; }
-.nav { display: flex; gap: 4px; flex-wrap: wrap; }
-.nav a { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 12px; color: var(--ink); font-weight: 600; font-size: var(--fs-m); }
+.nav { display: flex; gap: 4px; flex: 1 1 auto; min-width: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 12px; color: var(--ink); font-weight: 600; font-size: var(--fs-m); white-space: nowrap; flex: none; }
 .nav a:hover { background: var(--fill); }
 .nav a.active { background: var(--dark); color: #fff; }
-.user { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; min-width: 0; max-width: 100%; }
+.user { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; flex: none; }
 .user .col { display: none; }
 .avatar-btn { border: 0; background: transparent; padding: 0; cursor: pointer; border-radius: 50%; }
 .avatar-btn:hover .avatar { box-shadow: 0 0 0 3px var(--peach-2); }
