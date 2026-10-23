@@ -223,6 +223,13 @@ body.modal-open { overflow: hidden; }
 .role .icon svg { width: 24px; height: 24px; }
 
 /* Состояния ролей */
+.persona-rows { display: flex; flex-direction: column; }
+.persona-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 8px; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: inherit; border-radius: 10px; }
+.persona-row:first-child { border-top: 0; }
+.persona-row:hover { background: var(--fill); }
+.persona-row .chip { flex: none; min-width: 78px; justify-content: center; }
+.dot-now { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); margin-left: 2px; }
+.tab.active .dot-now { background: var(--cta); }
 .persona-list { display: flex; flex-direction: column; gap: 6px; }
 .persona { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border-radius: 12px; border: 0; background: var(--card); color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
 .persona:hover { background: var(--peach); }

@@ -83,25 +83,27 @@ export function roleModal() {
   const s = st();
   const role = s.session?.role;
   const u = sessionUser();
-  const sec = (r, icon, color, title) => `
-    <div class="role-row ${role === r ? 'current' : ''}" style="flex-direction:column;align-items:stretch;gap:10px">
-      <div class="row" style="gap:10px"><span class="icon" style="background:#fff;color:${color};width:36px;height:36px;border-radius:10px">${icon}</span><b>${title}</b>${role === r ? '<span class="chip peach">сейчас</span>' : ''}</div>
-      <div class="persona-list">${PERSONAS[r].map((pr) => personaButton(r, pr, true)).join('')}</div>
-    </div>`;
+  const ROLES = [['org', 'Организатор', I.sliders], ['judge', 'Судья', I.gavel], ['part', 'Участник', I.user], ['guest', 'Гость', I.globe], ['designer', 'Дизайнер', I.palette], ['owner', 'Владелец', I.star]];
+  const cur = ui.modalRole || role || 'org';
+  const tabs = ROLES.map(([r, name, icon]) => `<button type="button" class="tab s ${cur === r ? 'active' : ''}" data-action="modal-role" data-role="${r}">${icon.replace('<svg', '<svg width="16" height="16"')}<span>${name}</span>${role === r ? '<span class="dot-now" aria-label="текущая роль"></span>' : ''}</button>`).join('');
+  const list = PERSONAS[cur].map((pr) => {
+    const name = personaName(cur, pr);
+    return `<button type="button" class="persona-row" data-action="login-persona" data-role="${cur}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">
+      <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
+      <span class="col grow" style="gap:1px"><b class="small">${esc(pr.label)}${name ? ` <span class="muted" style="font-weight:600">· ${esc(name)}</span>` : ''}</b><span class="xs muted">${esc(pr.desc)}</span></span>
+      <span class="muted">${I.right}</span>
+    </button>`;
+  }).join('');
   return `
   <div class="modal-backdrop">
     <div class="modal" id="role-modal" role="dialog" aria-modal="true" aria-labelledby="role-modal-title" tabindex="-1">
       <div class="row-between" style="flex-wrap:nowrap">
-        <h2 id="role-modal-title" style="font-size:22px">${u ? 'Выйти и войти в другой роли' : 'Войти'}</h2>
+        <h2 id="role-modal-title" style="font-size:22px">${u ? 'Сменить роль' : 'Войти'}</h2>
         <button class="btn icon ghost" data-action="close-modal" aria-label="Закрыть">${I.plus.replace('<svg', '<svg style="transform:rotate(45deg)"')}</button>
       </div>
-      <p class="small muted">${u ? `Сейчас вы — ${u.name === ROLE_NAME[role] ? ROLE_NAME[role].toLowerCase() : `${esc(u.name)}, ${ROLE_NAME[role].toLowerCase()}`}${currentState() ? ', ' + esc(currentState()) : ''}.` : ''} Выберите роль и её состояние: этап чемпионата переключится сам.</p>
-      ${sec('org', I.sliders, 'var(--brand)', 'Организатор')}
-      ${sec('judge', I.gavel, 'var(--warn)', 'Судья')}
-      ${sec('part', I.user, 'var(--ok)', 'Участник')}
-      ${sec('guest', I.globe, 'var(--ink)', 'Гость')}
-      ${sec('designer', I.palette, 'var(--brand)', 'Дизайнер')}
-      ${sec('owner', I.star, 'var(--brand)', 'Владелец платформы')}
+      ${u ? `<p class="small muted">Сейчас: ${esc(u.name)}, ${ROLE_NAME[role].toLowerCase()}${currentState() ? ', ' + esc(currentState()) : ''}.</p>` : ''}
+      <div class="tabs" style="gap:6px">${tabs}</div>
+      <div class="persona-rows">${list}</div>
       <div class="row-between" style="border-top:1px solid var(--line);padding-top:14px">
         ${u ? `<button class="btn s ghost" data-action="logout">${I.logout}<span>Просто выйти</span></button>` : '<span></span>'}
         <div class="row" style="gap:8px"><a class="xs b" href="#/register" data-action="close-modal-link">Регистрация участника</a><button class="btn s" data-action="close-modal">Отмена</button></div>

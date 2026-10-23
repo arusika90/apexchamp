@@ -75,7 +75,8 @@ function go(hash) {
 }
 
 const common = {
-  'open-role-modal': () => { ui.roleModal = true; render(); },
+  'open-role-modal': () => { ui.roleModal = true; ui.modalRole = null; render(); },
+  'modal-role': (el) => { ui.modalRole = el.dataset.role; render(); },
   'close-modal': () => closeModal(),
   'login-persona': (el) => {
     const role = el.dataset.role;
