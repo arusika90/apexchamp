@@ -176,6 +176,8 @@ const FORMS = {
   profile: (form) => {
     const d = Object.fromEntries(new FormData(form).entries());
     if (!d.name?.trim()) { toast('Имя не может быть пустым'); return; }
+    if (!d.country?.trim()) { toast('Укажите страну'); return; }
+    if (!d.email?.trim()) { toast('Укажите почту'); return; }
     updateParticipant(sessionUser().id, d);
     ui.editProfile = false;
     toast('Профиль сохранён');

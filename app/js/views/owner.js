@@ -69,12 +69,12 @@ export function console_() {
         <form class="card stack" data-form="tenant" style="gap:12px">
           <h3>Добавить организатора</h3>
           <p class="xs muted">Организатор получит письмо со ссылкой, войдёт и настроит свой чемпионат: номинации, критерии, судей.</p>
-          <div class="field"><label for="t-champ">Название чемпионата</label><input id="t-champ" name="name" class="input s" required placeholder="Мисс Мышь 2027" data-input="tenant-name"></div>
-          <div class="field"><label for="t-slug">Адрес</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="t-slug" name="slug" class="input s" required placeholder="miss-mysh-2027" style="min-width:0"><span class="small muted" style="white-space:nowrap">.apexchamp.beauty</span></div></div>
-          <div class="field"><label for="t-org">Организатор</label><input id="t-org" name="orgName" class="input s" required placeholder="Имя и фамилия"></div>
-          <div class="field"><label for="t-email">Почта организатора</label><input id="t-email" name="orgEmail" class="input s" type="email" required placeholder="org@example.com"></div>
+          <div class="field req"><label for="t-champ">Название чемпионата</label><input id="t-champ" name="name" class="input s" required placeholder="Мисс Мышь 2027" data-input="tenant-name"></div>
+          <div class="field req"><label for="t-slug">Адрес</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input id="t-slug" name="slug" class="input s" required placeholder="miss-mysh-2027" style="min-width:0"><span class="small muted" style="white-space:nowrap">.apexchamp.beauty</span></div></div>
+          <div class="field req"><label for="t-org">Организатор</label><input id="t-org" name="orgName" class="input s" required placeholder="Имя и фамилия"></div>
+          <div class="field req"><label for="t-email">Почта организатора</label><input id="t-email" name="orgEmail" class="input s" type="email" required placeholder="org@example.com"></div>
           <div class="field"><label for="t-plan">Тариф</label><select id="t-plan" name="plan" class="input s">${PLANS.map((p) => `<option value="${p.id}">${p.name} — ${p.desc}</option>`).join('')}</select></div>
-          <div class="field"><label for="t-until">Доступ до</label><input id="t-until" name="until" class="input s" placeholder="31 декабря 2027"></div>
+          <div class="field"><label for="t-until">Доступ до <span class="opt">необязательно</span></label><input id="t-until" name="until" class="input s" placeholder="31 декабря 2027"></div>
           <button class="btn primary" type="submit">Создать доступ</button>
         </form>
         <section class="card stack" style="gap:8px">
@@ -190,6 +190,7 @@ export const forms = {
     const d = Object.fromEntries(new FormData(form).entries());
     const slug = slugify(d.slug || d.name);
     if (!d.name?.trim() || !slug) { toast('Нужны название и адрес'); return; }
+    if (!d.orgName?.trim() || !d.orgEmail?.trim()) { toast('Нужны имя и почта организатора'); return; }
     const s = st();
     s.tenants = s.tenants || [];
     if (s.tenants.some((t) => t.slug === slug)) { toast('Такой адрес уже занят'); return; }

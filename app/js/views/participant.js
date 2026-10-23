@@ -21,11 +21,11 @@ function profileCard(me, works) {
     return `
       <form class="card stack" data-form="profile" style="gap:12px">
         <h3>Профиль</h3>
-        <div class="field"><label for="pf-name">Имя и фамилия</label><input id="pf-name" name="name" class="input s" value="${esc(me.name)}" required></div>
-        <div class="field"><label for="pf-insta">Инстаграм</label><input id="pf-insta" name="insta" class="input s" value="${esc(me.insta || '')}"></div>
-        <div class="field"><label for="pf-country">Страна</label><input id="pf-country" name="country" class="input s" value="${esc(me.country || '')}"></div>
-        <div class="field"><label for="pf-email">Почта</label><input id="pf-email" name="email" class="input s" type="email" value="${esc(me.email || '')}"></div>
-        <div class="field"><label for="pf-cat">Категория</label><select id="pf-cat" name="cat" class="input s">${CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select>
+        <div class="field req"><label for="pf-name">Имя и фамилия</label><input id="pf-name" name="name" class="input s" value="${esc(me.name)}" required></div>
+        <div class="field req"><label for="pf-country">Страна</label><input id="pf-country" name="country" class="input s" value="${esc(me.country || '')}" required></div>
+        <div class="field req"><label for="pf-email">Почта</label><input id="pf-email" name="email" class="input s" type="email" value="${esc(me.email || '')}" required></div>
+        <div class="field"><label for="pf-insta">Инстаграм <span class="opt">необязательно</span></label><input id="pf-insta" name="insta" class="input s" value="${esc(me.insta || '')}"></div>
+        <div class="field req"><label for="pf-cat">Категория</label><select id="pf-cat" name="cat" class="input s">${CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select>
           ${works.length ? '<span class="xs muted">Категория уже поданных работ не меняется, уточните её у организатора.</span>' : ''}</div>
         <div class="row"><button class="btn s primary" type="submit">Сохранить</button><button class="btn s" type="button" data-action="profile-cancel">Отмена</button></div>
       </form>`;
@@ -48,8 +48,8 @@ function workForm(me) {
     <form class="card stack" data-form="work" style="border:2px solid var(--brand)">
       <div class="row-between"><h3>Новая работа</h3><button class="btn xs ghost" type="button" data-action="work-cancel">Отмена</button></div>
       <div class="grid-2">
-        <div class="field"><label for="wf-nom">Номинация</label><select id="wf-nom" name="nom" class="input" required><option value="">Выберите…</option>${groups}</select></div>
-        <div class="field"><label for="wf-cat">Категория</label><select id="wf-cat" name="cat" class="input">${CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select></div>
+        <div class="field req"><label for="wf-nom">Номинация</label><select id="wf-nom" name="nom" class="input" required><option value="">Выберите…</option>${groups}</select></div>
+        <div class="field req"><label for="wf-cat">Категория</label><select id="wf-cat" name="cat" class="input">${CATEGORIES.map((c) => `<option value="${c.id}" ${c.id === cat ? 'selected' : ''}>${c.name}</option>`).join('')}</select></div>
       </div>
       <p class="small muted">Номер работы присвоится автоматически. Фото загрузите на следующем шаге: список ракурсов зависит от номинации.</p>
       <div class="row"><button class="btn primary" type="submit">Создать работу</button></div>

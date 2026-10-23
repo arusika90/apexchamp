@@ -77,11 +77,11 @@ export function render() {
         ${sec('ds-chips', 'Чипы и места', 'Чип — статус или свойство. Место — отдельный компонент, цвет по месту.', `
           <div class="demo"><span class="chip">юниор</span><span class="chip ok"><span class="dot"></span>Итоги опубликованы</span><span class="chip warn"><span class="dot"></span>Идёт судейство</span><span class="chip danger">штраф</span><span class="chip info">инфо</span><span class="chip peach">шаблон</span><span class="chip dark">тёмный</span></div>
           <div class="demo">${placeChip(1)}${placeChip(2)}${placeChip(3)}${placeChip(0)}${placeChip(2, true)}<span class="place gp">Гран-при</span></div>`)}
-        ${sec('ds-forms', 'Поля ввода', 'Высота 48, серая заливка, при фокусе — белая с оранжевой рамкой. Подпись всегда над полем.', `
+        ${sec('ds-forms', 'Поля ввода', 'Высота 48, серая заливка, при фокусе — белая с оранжевой рамкой. Подпись над полем; обязательные помечены звёздочкой, необязательные — словом.', `
           <div class="grid-3">
-            <div class="field"><label for="ds-i1">Название</label><input id="ds-i1" class="input" value="Брови краска"></div>
+            <div class="field req"><label for="ds-i1">Название</label><input id="ds-i1" class="input" value="Брови краска"></div>
             <div class="field"><label for="ds-i2">Блок</label><select id="ds-i2" class="input"><option>Брови</option><option>Ламинирование</option></select></div>
-            <div class="field"><label for="ds-i3">Максимум</label><input id="ds-i3" class="input num" value="15"></div>
+            <div class="field"><label for="ds-i3">Подсказка <span class="opt">необязательно</span></label><input id="ds-i3" class="input" placeholder="как у остальных"></div>
           </div>
           <div class="field"><label for="ds-i4">Комментарий участнику</label><textarea id="ds-i4" class="input" placeholder="Что получилось, что снизило балл, над чем поработать"></textarea></div>
           <div class="demo"><label class="check"><input type="checkbox" checked>Отмечено</label><label class="check"><input type="checkbox">Не отмечено</label></div>`)}

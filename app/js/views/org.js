@@ -100,7 +100,7 @@ export function dashboard() {
 export function settings() {
   const s = st();
   const c = s.championship;
-  const field = (id, label, key, hint = '') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" class="input" value="${esc(c[key] || '')}" data-change="champ-field" data-key="${key}">${hint ? `<span class="xs muted">${hint}</span>` : ''}</div>`;
+  const field = (id, label, key, hint = '', req = false) => `<div class="field ${req ? 'req' : ''}"><label for="${id}">${label}${req ? '' : ' <span class="opt">необязательно</span>'}</label><input id="${id}" class="input" value="${esc(c[key] || '')}" data-change="champ-field" data-key="${key}">${hint ? `<span class="xs muted">${hint}</span>` : ''}</div>`;
   const body = `
     <div class="page-head"><div class="col" style="gap:8px"><h1>Чемпионат</h1><p class="muted">Название, сроки и логотип. Логотип виден в шапке, на публичной странице результатов и в дипломах.</p></div></div>
     <div class="two-col">
@@ -108,10 +108,10 @@ export function settings() {
         <section class="card stack">
           <h3>Название</h3>
           <div class="grid-2">
-            ${field('c-name', 'Название чемпионата', 'name')}
+            ${field('c-name', 'Название чемпионата', 'name', '', true)}
             ${field('c-short', 'Короткий код', 'short', 'До трёх букв, показывается вместо логотипа, пока его нет')}
           </div>
-          <div class="field"><label for="c-about">Описание для гостей</label><textarea id="c-about" class="input" data-change="champ-field" data-key="about">${esc(c.about || '')}</textarea><span class="xs muted">Показывается на публичной странице до оглашения итогов.</span></div>
+          <div class="field"><label for="c-about">Описание для гостей <span class="opt">необязательно</span></label><textarea id="c-about" class="input" data-change="champ-field" data-key="about">${esc(c.about || '')}</textarea><span class="xs muted">Показывается на публичной странице до оглашения итогов.</span></div>
           ${field('c-contact', 'Контакт для участников', 'contact', 'Инстаграм, телеграм или почта')}
         </section>
         <section class="card stack">
@@ -138,9 +138,9 @@ export function settings() {
         <section class="card stack">
           <h3>Сроки</h3>
           <div class="grid-3">
-            ${field('c-submit', 'Приём работ до', 'submitUntil')}
-            ${field('c-deadline', 'Судейство до', 'deadline')}
-            ${field('c-announce', 'Оглашение', 'announce')}
+            ${field('c-submit', 'Приём работ до', 'submitUntil', '', true)}
+            ${field('c-deadline', 'Судейство до', 'deadline', '', true)}
+            ${field('c-announce', 'Оглашение', 'announce', '', true)}
           </div>
           <p class="xs muted">Пока это текст для участников и судей. С сервером появятся настоящие даты и автоматическое закрытие этапов.</p>
         </section>
@@ -338,14 +338,14 @@ export function participants() {
     <form class="card stack" data-form="org-participant" style="border:2px solid var(--brand)">
       <div class="row-between"><h3>Новый участник</h3><button class="btn xs ghost" type="button" data-action="part-cancel">Отмена</button></div>
       <div class="grid-3">
-        <div class="field"><label for="np-name">Имя и фамилия</label><input id="np-name" name="name" class="input" required></div>
-        <div class="field"><label for="np-insta">Инстаграм</label><input id="np-insta" name="insta" class="input" placeholder="@ник"></div>
-        <div class="field"><label for="np-country">Страна</label><input id="np-country" name="country" class="input"></div>
-        <div class="field"><label for="np-email">Почта</label><input id="np-email" name="email" class="input" type="email" placeholder="для входа и дипломов"></div>
-        <div class="field"><label for="np-cat">Категория</label><select id="np-cat" name="cat" class="input">${CATEGORIES.map((c) => `<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+        <div class="field req"><label for="np-name">Имя и фамилия</label><input id="np-name" name="name" class="input" required></div>
+        <div class="field req"><label for="np-email">Почта</label><input id="np-email" name="email" class="input" type="email" required placeholder="для входа и дипломов"></div>
+        <div class="field req"><label for="np-country">Страна</label><input id="np-country" name="country" class="input" required></div>
+        <div class="field"><label for="np-insta">Инстаграм <span class="opt">необязательно</span></label><input id="np-insta" name="insta" class="input" placeholder="@ник"></div>
+        <div class="field req"><label for="np-cat">Категория</label><select id="np-cat" name="cat" class="input">${CATEGORIES.map((c) => `<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
         <div class="field"><label for="np-paid">Оплата</label><select id="np-paid" name="paid" class="input"><option value="">Ожидает оплаты</option><option value="paid">Оплачено</option><option value="free">Бесплатное участие</option></select></div>
       </div>
-      <p class="xs muted">Участник получит письмо со ссылкой для входа. Сам он сможет только подать работы и править профиль.</p>
+      <p class="xs muted">Звёздочкой отмечены обязательные поля. Участник получит письмо со ссылкой для входа и сможет подать работы и править профиль.</p>
       <div class="row"><button class="btn primary" type="submit">Создать участника</button></div>
     </form>` : ''}
     <section class="card flat">
@@ -583,7 +583,9 @@ function fitLogo(file) {
 export const forms = {
   'org-participant': (form) => {
     const d = Object.fromEntries(new FormData(form).entries());
-    if (!d.name?.trim()) { toast('Укажите имя и фамилию'); return; }
+    if (!d.name?.trim()) { toast('Укажите имя и фамилию'); form.name.focus(); return; }
+    if (!d.email?.trim()) { toast('Нужна почта: по ней участник войдёт'); form.email.focus(); return; }
+    if (!d.country?.trim()) { toast('Укажите страну'); form.country.focus(); return; }
     const id = addParticipant(d);
     const p = partById(id);
     p.paid = d.paid === 'paid';
@@ -601,7 +603,8 @@ export const changes = {
   'champ-field': (el) => {
     const key = el.dataset.key;
     const v = el.value.trim();
-    if (!v) { toast('Поле не может быть пустым'); rerender(); return; }
+    const optional = ['about', 'contact', 'short'];
+    if (!v && !optional.includes(key)) { toast('Это поле обязательное'); rerender(); return; }
     st().championship[key] = key === 'short' ? v.slice(0, 3).toUpperCase() : v;
     save();
     toast('Сохранено');
