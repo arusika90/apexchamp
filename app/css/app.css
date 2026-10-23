@@ -172,6 +172,14 @@ textarea.input { height: auto; min-height: 120px; padding: 14px; line-height: 1.
 .table-wrap { overflow-x: auto; }
 .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 16px 24px 8px; }
 
+/* Панель фильтров */
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 24px 14px; border-bottom: 1px solid var(--line); }
+.toolbar .search { position: relative; display: inline-flex; align-items: center; flex: 1 1 220px; max-width: 360px; }
+.toolbar .search svg { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+.toolbar .search .input { padding-left: 36px; background: var(--fill); }
+.toolbar .tabs .tab.s { height: 34px; }
+.table-empty { padding: 20px 24px; color: var(--muted); font-size: 14px; }
+
 /* Карточки работ */
 .work-card { display: flex; flex-direction: column; background: var(--card); border-radius: var(--r-l); overflow: hidden; color: var(--ink); }
 .work-card:hover { color: var(--ink); box-shadow: var(--shadow-2); }
@@ -224,6 +232,7 @@ body.modal-open { overflow: hidden; }
 .persona-row:first-child { border-top: 0; }
 .persona-row:hover { background: var(--fill); }
 .persona-row .chip { flex: none; min-width: 78px; justify-content: center; }
+.icon-sq { width: 40px; height: 40px; border-radius: 12px; background: var(--peach); color: var(--brand); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .dot-now { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); margin-left: 2px; }
 .tab.active .dot-now { background: var(--cta); }
 .persona-list { display: flex; flex-direction: column; gap: 6px; }

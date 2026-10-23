@@ -2,7 +2,7 @@
 // Сейчас по-настоящему работает один чемпионат (демо-данные), остальные строки — пример того,
 // как будет выглядеть список при нескольких арендаторах.
 import { st, save } from '../store.js';
-import { esc, I, toast, rerender, plural, href, pct } from '../ui.js';
+import { esc, I, toast, rerender, plural, href, pct, tableToolbar } from '../ui.js';
 import { shell } from './common.js';
 import { progress } from '../scoring.js';
 
@@ -32,7 +32,7 @@ export function console_() {
   const active = tenants.filter((t) => t.status === 'active' || t.status === 'trial').length;
   const orgs = new Set(tenants.map((t) => t.orgEmail)).size;
   const rows = tenants.map((t) => `
-    <tr class="row-link" data-href="${href('owner', 'tenant', t.id)}">
+    <tr class="row-link" data-href="${href('owner', 'tenant', t.id)}" data-search="${esc((t.name + ' ' + t.slug + ' ' + t.orgName + ' ' + t.orgEmail).toLowerCase())}" data-tags="${esc(t.status)} plan-${esc(t.plan)}">
       <td><a class="b" style="color:var(--ink)" href="${href('owner', 'tenant', t.id)}">${esc(t.name)}</a><div class="xs muted">${t.real ? `${s.works.length} ${plural(s.works.length, 'работа', 'работы', 'работ')} · ${s.nominations.length} номинаций` : esc(t.note || '')}</div></td>
       <td class="small"><a href="https://${esc(t.slug)}.apexchamp.beauty" onclick="return false">${esc(t.slug)}.apexchamp.beauty</a></td>
       <td class="small">${esc(t.orgName)}<div class="xs muted">${esc(t.orgEmail)}</div></td>
@@ -57,10 +57,12 @@ export function console_() {
         ${preset === 'expired' ? `<section class="card lemon pad-s small"><b>Доступы, которым нужно внимание.</b> Истёкшие чемпионаты уходят в архив: таблица результатов остаётся открытой, кабинеты закрыты. Активируйте после оплаты.</section>` : ''}
         <section class="card flat ${preset === 'empty' && !tenants.length ? 'hide' : ''}">
           <div class="section-title"><h3>Чемпионаты</h3><span class="small muted">адрес выдаётся автоматически из названия</span></div>
+          ${tableToolbar('tenants', 'Название, адрес, организатор', [['', 'Все'], ['active', 'Активные'], ['trial', 'Пробные'], ['draft', 'Ждут оплаты'], ['expired', 'Истёкшие'], ['paused', 'Приостановлены']])}
           <div class="table-wrap"><table class="table">
             <thead><tr><th>Чемпионат</th><th>Адрес</th><th>Организатор</th><th>Тариф</th><th>Статус</th><th></th></tr></thead>
-            <tbody>${rows}</tbody>
+            <tbody data-rows="tenants">${rows}</tbody>
           </table></div>
+          <div class="table-empty hide" data-empty="tenants">Ничего не найдено.</div>
         </section>
       </div>
       <aside class="side">

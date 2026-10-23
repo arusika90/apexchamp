@@ -1,7 +1,7 @@
 // Кабинет организатора: видит и правит всё.
 import { st, ui, save, nomById, workByCode, judgeById, partById, nomOf, worksOfNom, blockName, sheetOf, addParticipant } from '../store.js';
 import { result, placeOf, maxOf, sheetTotal, filledCount, groupsOf, judgeStats, progress, placeSummary, grandPrix } from '../scoring.js';
-import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES } from '../ui.js';
+import { esc, pct, num, parseNum, I, href, toast, catName, bar, placeChip, plural, rerender, dateTime, CATEGORIES, tableToolbar } from '../ui.js';
 import { shell, stageChip } from './common.js';
 import { THEMES, BACKGROUNDS, themeVars } from '../theme.js';
 
@@ -195,13 +195,14 @@ export function nomination(id) {
 
   const worksTab = `
     <section class="card flat">
+      ${tableToolbar('works', 'Номер работы, участник, страна', [['', 'Все'], ['cat-junior', 'Юниоры'], ['cat-master', 'Мастера'], ['cat-expert', 'Эксперты'], ['placed', 'С местом'], ['noplace', 'Без места'], ['pending', 'Не все судьи']])}
       <div class="table-wrap"><table class="table">
         <thead><tr><th>Работа</th><th>Участник</th><th>Категория</th><th>Судьи</th><th>Средний балл</th><th>Место</th></tr></thead>
-        <tbody>${works.map((w) => {
+        <tbody data-rows="works">${works.map((w) => {
           const r = result(w);
           const pl = placeOf(w);
           const p = partById(w.pid);
-          return `<tr>
+          return `<tr data-search="${esc((w.code + ' ' + p.name + ' ' + p.insta + ' ' + p.country).toLowerCase())}" data-tags="cat-${w.cat} ${pl.place >= 1 ? 'placed' : 'noplace'} ${r.sent < r.of ? 'pending' : 'judged'}">
             <td class="work"><a style="color:var(--ink)" href="${href('org', 'work', w.code)}">${esc(w.code)}</a></td>
             <td><b>${esc(p.name)}</b><div class="xs muted">${esc(p.insta)} · ${esc(p.country)}</div></td>
             <td><span class="chip">${catName(w.cat)}</span></td>
@@ -209,7 +210,7 @@ export function nomination(id) {
             <td class="pct num">${pct(r.pct)}</td>
             <td>${placeChip(pl.place, pl.manual)}</td></tr>`;
         }).join('')}</tbody>
-      </table></div>
+      </table></div><div class="table-empty hide" data-empty="works">Ничего не найдено.</div>
     </section>`;
 
   const groupsList = [...new Set(n.criteria.map((c) => c.group))];
@@ -287,7 +288,7 @@ export function judges() {
     const x = judgeStats(j.id);
     const noms = s.nominations.filter((n) => n.judgeIds.includes(j.id));
     const total = x.assigned - x.recused;
-    return `<tr>
+    return `<tr data-search="${esc((j.name + ' ' + j.country + ' ' + noms.map((n) => n.name).join(' ')).toLowerCase())}" data-tags="${x.left ? 'todo' : 'done'} ${noms.map((n) => 'block-' + n.block).join(' ')}">
       <td><div class="row" style="gap:10px"><span class="avatar" aria-hidden="true">${esc(j.initials)}</span><div><b>${esc(j.name)}</b><div class="xs muted">${esc(j.country)}</div></div></div></td>
       <td class="small">${noms.map((n) => esc(n.name)).join(', ') || '—'}</td>
       <td class="num">${x.sent} из ${total}${x.draft ? ` <span class="xs" style="color:var(--warn)">· ${x.draft} в черновике</span>` : ''}${x.recused ? ` <span class="xs muted">· ${x.recused} отвод</span>` : ''}</td>
@@ -300,10 +301,12 @@ export function judges() {
       <div class="col" style="gap:8px"><h1>Судьи</h1><p class="muted">Кто сколько оценил. «Войти как» открывает кабинет судьи, вернуться можно кнопкой в шапке.</p></div>
       <button class="btn" data-action="remind" data-who="all">${I.bell}<span>Напомнить всем, кто не закончил</span></button>
     </div>
-    <section class="card flat"><div class="table-wrap"><table class="table">
+    <section class="card flat">
+      ${tableToolbar('judges', 'Имя, страна, номинация', [['', 'Все'], ['todo', 'Не закончили'], ['done', 'Готово'], ['block-lash', 'Ресницы'], ['block-lami', 'Лами'], ['block-brows', 'Брови']])}
+      <div class="table-wrap"><table class="table">
       <thead><tr><th>Судья</th><th>Номинации</th><th>Отправлено</th><th>Прогресс</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div></section>`;
+      <tbody data-rows="judges">${rows}</tbody>
+    </table></div><div class="table-empty hide" data-empty="judges">Ничего не найдено.</div></section>`;
   return shell('org/judges', body);
 }
 
@@ -313,7 +316,8 @@ export function participants() {
   const rows = s.participants.map((p) => {
     const works = s.works.filter((w) => w.pid === p.id);
     const cats = [...new Set(works.map((w) => w.cat))];
-    return `<tr>
+    const payTag = p.free ? 'free' : p.paid ? 'paid' : 'unpaid';
+    return `<tr data-search="${esc((p.name + ' ' + p.insta + ' ' + p.country + ' ' + works.map((w) => w.code).join(' ')).toLowerCase())}" data-tags="${cats.map((c) => 'cat-' + c).join(' ')} ${p.cat ? 'cat-' + p.cat : ''} ${payTag}">
       <td><b>${esc(p.name)}</b><div class="xs muted">${esc(p.insta)}</div></td>
       <td class="small">${esc(p.country)}</td>
       <td class="small">${works.map((w) => `<a href="${href('org', 'work', w.code)}">${esc(w.code)}</a>${(w.status || 'submitted') === 'draft' ? ' <span class="xs muted">черновик</span>' : ''}`).join(', ') || '<span class="muted">—</span>'}</td>
@@ -342,10 +346,12 @@ export function participants() {
       <p class="xs muted">Участник получит письмо со ссылкой для входа. Сам он сможет только подать работы и править профиль.</p>
       <div class="row"><button class="btn primary" type="submit">Создать участника</button></div>
     </form>` : ''}
-    <section class="card flat"><div class="table-wrap"><table class="table">
+    <section class="card flat">
+      ${tableToolbar('participants', 'Имя, инстаграм, страна, номер работы', [['', 'Все'], ['cat-junior', 'Юниоры'], ['cat-master', 'Мастера'], ['cat-expert', 'Эксперты'], ['unpaid', 'Не оплатили'], ['free', 'Бесплатно']])}
+      <div class="table-wrap"><table class="table">
       <thead><tr><th>Участник</th><th>Страна</th><th>Работы</th><th>Категория</th><th>Оплата</th><th>Гран-при</th><th></th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div></section>`;
+      <tbody data-rows="participants">${rows}</tbody>
+    </table></div><div class="table-empty hide" data-empty="participants">Ничего не найдено.</div></section>`;
   return shell('org/participants', body);
 }
 

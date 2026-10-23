@@ -62,9 +62,30 @@ function render() {
   if (platformPage) resetTheme(); else applyTheme(s.championship.theme);
   document.getElementById('app').innerHTML = m.r.v(...m.params);
   document.title = `${m.r.t} · ApexChamp`;
+  applyTableFilters();
   document.body.classList.toggle('modal-open', !!ui.roleModal);
   if (ui.roleModal && !wasOpen) document.getElementById('role-modal')?.focus();
   if (path !== lastPath) { window.scrollTo(0, 0); lastPath = path; }
+}
+
+// Применяет сохранённые поиск и чип к таблицам на странице.
+function applyTableFilters() {
+  document.querySelectorAll('[data-toolbar]').forEach((tb) => {
+    const id = tb.dataset.toolbar;
+    const f = ui.tf[id] || { q: '', tag: '' };
+    const inp = tb.querySelector('[data-input="table-search"]');
+    if (inp && inp.value !== f.q) inp.value = f.q;
+    tb.querySelectorAll('[data-action="table-chip"]').forEach((b) => b.classList.toggle('active', (b.dataset.tag || '') === (f.tag || '')));
+    const q = f.q.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll(`[data-rows="${id}"] tr[data-search]`).forEach((tr) => {
+      const ok = (!q || tr.dataset.search.includes(q)) && (!f.tag || (' ' + (tr.dataset.tags || '') + ' ').includes(' ' + f.tag + ' '));
+      tr.classList.toggle('hide', !ok);
+      if (ok) shown++;
+    });
+    const empty = document.querySelector(`[data-empty="${id}"]`);
+    if (empty) empty.classList.toggle('hide', shown > 0);
+  });
 }
 
 function closeModal() {
@@ -80,7 +101,7 @@ function go(hash) {
 
 const common = {
   'open-role-modal': () => { ui.roleModal = true; ui.modalRole = null; render(); },
-  'modal-role': (el) => { ui.modalRole = el.dataset.role; render(); },
+  'modal-role': (el) => { ui.modalRole = el.dataset.role || null; render(); },
   'close-modal': () => closeModal(),
   'login-persona': (el) => {
     const role = el.dataset.role;
@@ -137,6 +158,7 @@ const common = {
     rerender();
   },
   'profile-edit': () => { ui.editProfile = true; rerender(); },
+  'table-chip': (el) => { const id = el.dataset.table; ui.tf[id] = { ...(ui.tf[id] || { q: '' }), tag: el.dataset.tag || '' }; applyTableFilters(); },
   'profile-cancel': () => { ui.editProfile = false; rerender(); },
 };
 
@@ -164,7 +186,7 @@ const FORMS = {
 Object.assign(FORMS, participant.forms, owner.forms, org.forms);
 const ACTIONS = { ...common, ...design.actions, ...results.actions, ...org.actions, ...judge.actions, ...participant.actions, ...owner.actions };
 const CHANGES = { ...org.changes, ...judge.changes, ...owner.changes };
-const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs };
+const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs, 'table-search': (el) => { const id = el.dataset.table; ui.tf[id] = { ...(ui.tf[id] || { tag: '' }), q: el.value }; applyTableFilters(); } };
 
 function start() {
   load();

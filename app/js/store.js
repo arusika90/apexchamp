@@ -18,6 +18,7 @@ export const ui = {
   newWork: false,
   modalRole: null,
   newParticipant: false,
+  tf: {},
 };
 
 export function load() {

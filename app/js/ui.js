@@ -59,6 +59,14 @@ export const CATEGORIES = [
 ];
 export const catName = (id) => (CATEGORIES.find((c) => c.id === id)?.name || id).toLowerCase();
 
+// Панель поиска и фильтров над таблицей. Строки таблицы несут data-search и data-tags.
+export function tableToolbar(id, placeholder, chips = []) {
+  return `<div class="toolbar" data-toolbar="${id}">
+    <label class="search"><span class="hide">Поиск</span>${I.search}<input class="input s" type="search" placeholder="${esc(placeholder)}" data-input="table-search" data-table="${id}"></label>
+    ${chips.length ? `<div class="tabs" style="gap:6px">${chips.map(([tag, label], i) => `<button type="button" class="tab s ${i === 0 ? 'active' : ''}" data-action="table-chip" data-table="${id}" data-tag="${esc(tag)}">${esc(label)}</button>`).join('')}</div>` : ''}
+  </div>`;
+}
+
 export function bar(frac, cls = '') {
   const w = Math.max(0, Math.min(1, frac || 0));
   return `<div class="bar ${cls}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(w * 100)}"><i style="width:${(w * 100).toFixed(1)}%"></i></div>`;
