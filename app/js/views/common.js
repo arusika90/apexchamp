@@ -26,9 +26,7 @@ export function header(active) {
   const impersonated = !!s.session?.by;
   const userHtml = u
     ? `${impersonated ? `<button class="btn xs" style="background:var(--peach);color:var(--brand-ink)" data-action="back-to-org">${s.session.by === 'owner' ? 'Вернуться к платформе' : 'Вернуться к организатору'}</button>` : ''}
-       <span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}" title="${esc(u.name)} · ${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}" aria-label="${esc(u.name)}, ${ROLE_NAME[role]}">${esc(u.initials)}</span>
-       <span class="col" style="gap:0;line-height:1.2"><b class="small">${esc(u.name)}</b><span class="xs muted">${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}</span></span>
-       <button class="btn s" data-action="open-role-modal" title="Выйти или сменить роль" aria-label="Выйти или сменить роль" aria-haspopup="dialog">${I.logout}<span>Выйти</span></button>`
+       <button type="button" class="avatar-btn" data-action="open-role-modal" title="${esc(u.name)} · ${ROLE_NAME[role]}${currentState() ? ' · ' + esc(currentState()) : ''}. Нажмите, чтобы сменить роль или выйти" aria-label="${esc(u.name)}, ${ROLE_NAME[role]}. Сменить роль или выйти" aria-haspopup="dialog"><span class="avatar ${role === 'org' || role === 'designer' || role === 'owner' ? 'brand' : ''}">${esc(u.initials)}</span></button>`
     : `<button class="btn s primary" data-action="open-role-modal" aria-haspopup="dialog">Войти</button>`;
   return `
   <header class="topbar">
