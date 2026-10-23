@@ -21,9 +21,12 @@ export const logoMark = () => `<span class="logo-mark">${I.lash}</span>`;
 // Бренд чемпионата: его логотип (или код в цвете темы) и название.
 export const champBrand = () => {
   const c = st().championship;
+  const name = String(c.name || '');
+  const m = name.match(/^(.*?)(\s+\d{4})$/) || name.match(/^(.*?)(\s+\S+)$/);
+  const label = m ? `${esc(m[1])}<span class="accent">${esc(m[2])}</span>` : esc(name);
   return c.logo
-    ? `<img class="champ-mark" src="${c.logo}" alt=""><span class="champ-name">${esc(c.name)}</span>`
-    : `<span class="champ-name solo">${esc(c.name)}</span>`;
+    ? `<img class="champ-mark" src="${c.logo}" alt=""><span class="champ-name">${label}</span>`
+    : `<span class="champ-name solo">${label}</span>`;
 };
 
 export const wordmark = () => `<span class="wordmark">apex<span>champ</span></span>`;
