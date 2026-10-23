@@ -45,7 +45,7 @@ export function render() {
       <span class="icon" style="background:${iconBg};color:${iconColor}">${icon}</span>
       <h3>${title}</h3>
       <p class="small muted">${text}</p>
-      <div class="persona-list">${PERSONAS[r].map((pr) => personaButton(r, pr)).join('')}</div>
+      <div class="persona-list">${PERSONAS[r].map((pr, i) => personaButton(r, pr, false, i + 1)).join('')}</div>
       <p class="xs" style="color:var(--brand-ink);background:var(--peach);padding:10px 12px;border-radius:10px;line-height:1.45"><b>Попробуйте.</b> ${TIPS[r]}</p>
       ${extra}
     </div>`;

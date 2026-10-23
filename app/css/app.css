@@ -251,6 +251,7 @@ body.modal-open { overflow: hidden; }
 .persona-row:first-child { border-top: 0; }
 .persona-row:hover { background: var(--fill); }
 .persona-row .chip { flex: none; min-width: 78px; justify-content: center; }
+.num-badge { width: 24px; height: 24px; border-radius: 50%; background: var(--dark); color: #fff; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .icon-sq { width: 40px; height: 40px; border-radius: 12px; background: var(--peach); color: var(--brand); display: inline-flex; align-items: center; justify-content: center; flex: none; }
 .dot-now { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); margin-left: 2px; }
 .tab.active .dot-now { background: var(--cta); }

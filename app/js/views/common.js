@@ -91,9 +91,10 @@ export function personaName(role, pr) {
   return '';
 }
 
-export function personaButton(role, pr, compact = false) {
+export function personaButton(role, pr, compact = false, index = null) {
   const name = personaName(role, pr);
   return `<button type="button" class="persona ${compact ? 'compact' : ''}" data-action="login-persona" data-role="${role}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">
+    ${index != null ? `<span class="num-badge">${index}</span>` : ''}
     <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
     <span class="col grow" style="gap:1px;min-width:0"><b class="small">${esc(pr.label)}${name ? ` <span class="muted" style="font-weight:600">· ${esc(name)}</span>` : ''}</b>${compact ? '' : `<span class="xs muted">${esc(pr.desc)}</span>`}</span>
     ${compact ? '' : `<span class="persona-go">Войти ${I.right.replace('<svg', '<svg width="16" height="16"')}</span>`}
@@ -128,9 +129,10 @@ export function roleModal() {
     body = `
       <button type="button" class="btn s ghost" style="align-self:flex-start;margin-left:-10px" data-action="modal-role" data-role="">${I.left}<span>Роли</span></button>
       <div class="col" style="gap:2px"><h3>${name}</h3><span class="small muted">Выберите состояние: до, во время или после чемпионата.</span></div>
-      <div class="persona-rows">${PERSONAS[cur].map((pr) => {
+      <div class="persona-rows">${PERSONAS[cur].map((pr, i) => {
         const pn = personaName(cur, pr);
         return `<button type="button" class="persona-row" data-action="login-persona" data-role="${cur}" data-user="${pr.user || ''}" data-stage="${pr.stage || ''}" data-preset="${pr.preset || ''}">
+          <span class="num-badge">${i + 1}</span>
           <span class="chip phase-${pr.phase}">${phaseName(pr.phase)}</span>
           <span class="col grow" style="gap:1px"><b class="small">${esc(pr.label)}${pn ? ` <span class="muted" style="font-weight:600">· ${esc(pn)}</span>` : ''}</b><span class="xs muted">${esc(pr.desc)}</span></span>
           <span class="muted">${I.right}</span>
