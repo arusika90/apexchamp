@@ -80,7 +80,7 @@ function stepBody(step) {
       <div class="col" style="gap:6px;padding:16px;border-radius:14px;background:var(--fill)"><span class="label">Номинации</span><b>${s.nominations.length}</b><span class="small muted">${s.blocks.map((b) => `${esc(b.name)}: ${s.nominations.filter((n) => n.block === b.id).length}`).join(' · ')}</span></div>
       <div class="col" style="gap:6px;padding:16px;border-radius:14px;background:var(--fill)"><span class="label">Места</span><span class="small">${CATEGORIES.map((cat) => `${cat.name}: ${s.settings.thresholds[cat.id].map((x) => num(x)).join(' / ')} %`).join('<br>')}</span></div>
     </div>
-    <div class="row"><button class="btn primary" data-action="setup-finish">Открыть приём работ</button><span class="small muted">Дальше: пригласить судей и участников</span></div>`;
+    <div class="row"><button class="btn primary" data-action="stage-ask" data-stage="submission">Открыть приём работ</button><span class="small muted">Дальше: пригласить судей и участников</span></div>`;
 }
 
 function nomForm() {

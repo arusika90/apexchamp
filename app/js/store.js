@@ -22,6 +22,7 @@ export const ui = {
   newJudge: false,
   navOpen: false,
   setupStep: 0,
+  stageAsk: null,
   setupNomForm: false,
   tf: {},
 };

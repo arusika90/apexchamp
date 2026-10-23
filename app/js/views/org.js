@@ -8,8 +8,8 @@ import { render as setupView } from './setup.js';
 import { TEMPLATE_NAMES } from '../data.js';
 
 const pubBtn = () => (st().championship.stage === 'published'
-  ? '<button class="btn" data-action="set-stage" data-stage="judging">Снять итоги с публикации</button>'
-  : '<button class="btn primary" data-action="set-stage" data-stage="published">Опубликовать итоги</button>');
+  ? '<button class="btn" data-action="stage-ask" data-stage="judging">Снять итоги с публикации</button>'
+  : '<button class="btn primary" data-action="stage-ask" data-stage="published">Опубликовать итоги</button>');
 
 // ---------- Обзор ----------
 export function dashboard() {
@@ -46,7 +46,7 @@ export function dashboard() {
         <h1>${esc(c.name)}</h1>
         <div class="row">${stageChip()}<span class="small muted">${pub ? `оглашение ${esc(c.announce)}` : `до ${esc(c.deadline)}`}</span></div>
       </div>
-      <div class="row"><a class="btn" href="#/org/places">${I.trophy}<span>Места и Гран-при</span></a>${c.stage === 'submission' ? '<button class="btn primary" data-action="set-stage" data-stage="judging">Закрыть приём и открыть судейство</button>' : pubBtn()}</div>
+      <div class="row"><a class="btn" href="#/org/places">${I.trophy}<span>Места и Гран-при</span></a>${c.stage === 'submission' ? '<button class="btn primary" data-action="stage-ask" data-stage="judging">Закрыть приём и открыть судейство</button>' : pubBtn()}</div>
     </div>
 
     <section class="card stage">

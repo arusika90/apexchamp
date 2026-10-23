@@ -92,8 +92,47 @@ export function navDrawer(active) {
   </div>`;
 }
 
+const STAGE_INFO = {
+  submission: {
+    title: 'Открыть приём работ',
+    lead: 'Участники смогут подавать работы и загружать фото. Настройки номинаций и критериев останутся доступны.',
+    what: ['Участники создают работы, номер присваивается автоматически', 'Загружают фото по ракурсам регламента и подают на судейство', 'Вы приглашаете судей и участников, отмечаете оплату', 'Судейство пока закрыто: судьи видят только свои номинации'],
+    btn: 'Открыть приём',
+  },
+  judging: {
+    title: 'Закрыть приём и открыть судейство',
+    lead: 'Новые работы подать будет нельзя. Судьи начнут оценивать поданные работы.',
+    what: ['Судьи видят работы своих номинаций только по номерам', 'Ставят баллы по критериям, штраф и обязательный комментарий', 'Вы следите за прогрессом и разбросом оценок, можете поправить оценку', 'Участники видят «На оценке», итоги скрыты до оглашения'],
+    btn: 'Открыть судейство',
+  },
+  published: {
+    title: 'Опубликовать итоги',
+    lead: 'Участники увидят проценты, места и комментарии судей. Гости — публичную таблицу.',
+    what: ['Публичная таблица по номерам работ без имён', 'Гран-при и спец-призы', 'У участников — оценки по группам критериев и комментарии «Судья N»', 'Ведомости судей закрываются для правок. Итоги можно снять с публикации'],
+    btn: 'Опубликовать',
+  },
+};
+
+export function stageDialog() {
+  const to = ui.stageAsk;
+  const info = STAGE_INFO[to];
+  if (!info) return '';
+  return `
+  <div class="modal-backdrop center" data-stage-backdrop>
+    <div class="dialog" id="stage-dialog" role="dialog" aria-modal="true" aria-labelledby="stage-dialog-title" tabindex="-1">
+      <div class="row-between" style="flex-wrap:nowrap"><h2 id="stage-dialog-title" style="font-size:22px">${info.title}?</h2><button class="btn icon ghost" data-action="stage-cancel" aria-label="Закрыть">${I.plus.replace('<svg', '<svg style="transform:rotate(45deg)"')}</button></div>
+      <p class="muted">${info.lead}</p>
+      <details class="stage-details">
+        <summary>Что будет на этом этапе</summary>
+        <ul>${info.what.map((x) => `<li>${x}</li>`).join('')}</ul>
+      </details>
+      <div class="row" style="justify-content:flex-end;gap:10px"><button class="btn" data-action="stage-cancel">Отмена</button><button class="btn primary" data-action="set-stage" data-stage="${to}">${info.btn}</button></div>
+    </div>
+  </div>`;
+}
+
 export function shell(active, body, actionbar = '') {
-  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.navOpen ? navDrawer(active) : ''}${ui.roleModal ? roleModal() : ''}`;
+  return `${header(active)}<main class="page">${body}</main>${actionbar}${footer()}${ui.navOpen ? navDrawer(active) : ''}${ui.roleModal ? roleModal() : ''}${ui.stageAsk ? stageDialog() : ''}`;
 }
 
 // Всплывающее окно «Выйти»: сразу предлагает, кем и в каком состоянии войти.

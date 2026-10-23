@@ -65,7 +65,7 @@ function render() {
   document.getElementById('app').innerHTML = m.r.v(...m.params);
   document.title = `${m.r.t} · ApexChamp`;
   applyTableFilters();
-  document.body.classList.toggle('modal-open', !!ui.roleModal || !!ui.navOpen);
+  document.body.classList.toggle('modal-open', !!ui.roleModal || !!ui.navOpen || !!ui.stageAsk);
   if (ui.roleModal && !wasOpen) document.getElementById('role-modal')?.focus();
   if (path !== lastPath) { window.scrollTo(0, 0); lastPath = path; }
 }
@@ -157,10 +157,15 @@ const common = {
     save();
     go('#/org');
   },
+  'stage-ask': (el) => { ui.stageAsk = el.dataset.stage; render(); document.getElementById('stage-dialog')?.focus(); },
+  'stage-cancel': () => { ui.stageAsk = null; render(); },
   'set-stage': (el) => {
+    const wasSetup = st().championship.stage === 'setup';
+    ui.stageAsk = null;
     st().championship.stage = el.dataset.stage;
     save();
-    toast(el.dataset.stage === 'published' ? 'Итоги опубликованы: участники видят проценты, места и комментарии' : 'Итоги скрыты, идёт судейство');
+    toast({ submission: 'Приём работ открыт', judging: 'Судейство открыто', published: 'Итоги опубликованы: участники видят проценты, места и комментарии' }[el.dataset.stage] || 'Этап изменён');
+    if (wasSetup) { ui.setupStep = 0; location.hash = '#/org'; }
     rerender();
   },
   'reset-data': () => {
@@ -204,6 +209,7 @@ const INPUTS = { ...results.inputs, ...judge.inputs, ...owner.inputs, 'table-sea
 function start() {
   load();
   document.addEventListener('click', (e) => {
+    if (e.target.hasAttribute?.('data-stage-backdrop')) { ui.stageAsk = null; render(); return; }
     if (e.target.classList?.contains('modal-backdrop')) { if (e.target.hasAttribute('data-nav-backdrop')) { ui.navOpen = false; render(); } else closeModal(); return; }
     const rowLink = e.target.closest('tr.row-link');
     if (rowLink && !e.target.closest('a, button, input, select')) { location.hash = rowLink.dataset.href; return; }
@@ -229,6 +235,7 @@ function start() {
     if (el && INPUTS[el.dataset.input]) INPUTS[el.dataset.input](el, e);
   });
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && ui.stageAsk) { ui.stageAsk = null; render(); return; }
     if (e.key === 'Escape' && ui.navOpen) { ui.navOpen = false; render(); return; }
     if (e.key === 'Escape' && ui.roleModal) { closeModal(); return; }
     if (e.key === 'Enter' && e.target.matches('input[data-change]')) e.target.blur();

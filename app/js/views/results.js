@@ -194,7 +194,7 @@ export function render() {
     ${prizesCard()}` : '';
 
   const body = `
-    ${!pub ? `<section class="card lemon row-between"><span class="row" style="gap:10px">${I.eye.replace('<svg', '<svg width="20" height="20"')}<b>Предпросмотр.</b> Участники и гости пока не видят эту таблицу.</span><button class="btn s primary" data-action="set-stage" data-stage="published">Опубликовать итоги</button></section>` : ''}
+    ${!pub ? `<section class="card lemon row-between"><span class="row" style="gap:10px">${I.eye.replace('<svg', '<svg width="20" height="20"')}<b>Предпросмотр.</b> Участники и гости пока не видят эту таблицу.</span><button class="btn s primary" data-action="stage-ask" data-stage="published">Опубликовать итоги</button></section>` : ''}
     ${champHead}
     <div class="tabs">${blocks.map((b) => `<button class="tab ${active === b.id ? 'active' : ''}" data-action="results-block" data-block="${b.id}">${esc(b.name)}</button>`).join('')}</div>
     <div class="two-col">
