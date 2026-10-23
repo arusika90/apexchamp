@@ -11,7 +11,7 @@ const NAV = {
   part: [['me', 'Мои работы'], ['results', 'Общая таблица']],
   guest: [['results', 'Результаты']],
   designer: [['design', 'Дизайн-система'], ['results', 'Результаты']],
-  owner: [['owner', 'Платформа'], ['org', 'Демо-чемпионат'], ['design', 'Дизайн-система']],
+  owner: [['owner', 'Платформа'], ['org', 'Демо-чемпионат']],
 };
 
 export const logoMark = () => `<span class="logo-mark">${I.lash}</span>`;
@@ -32,7 +32,7 @@ export function header(active) {
   <header class="topbar">
     <div class="topbar-in">
       <a class="logo" href="#/roles">${logoMark()}${wordmark()}</a>
-      <span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>
+      ${role === 'owner' || role === 'designer' ? '' : `<span class="champ-chip ${s.championship.logo ? '' : 'no-logo'}">${s.championship.logo ? `<img class="champ-logo" src="${s.championship.logo}" alt="">` : ''}${esc(s.championship.name)}</span>`}
       <nav class="nav" aria-label="Разделы">${navHtml}</nav>
       <div class="user">${userHtml}</div>
     </div>
