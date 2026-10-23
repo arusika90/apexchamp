@@ -205,8 +205,8 @@ body.modal-open { overflow: hidden; }
 .toast[hidden] { display: none; }
 
 /* Вход по ролям */
-.login { min-height: 100vh; display: flex; flex-direction: column; }
-.login-in { max-width: 1216px; margin: 0 auto; padding: 20px 24px 80px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
+.login { display: flex; flex-direction: column; }
+.login-in { max-width: 1216px; margin: 0 auto; padding: 20px 24px 48px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
 .role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .role-grid { grid-template-columns: minmax(0, 1fr); } }
@@ -251,7 +251,6 @@ body.modal-open { overflow: hidden; }
 .footer .muted { color: #B6BCC4; }
 .footer-in nav a { color: #fff; font-weight: 600; }
 .footer-in nav a:hover { color: var(--cta); }
-.login .footer { margin: 24px -24px -80px; }
 
 /* Дизайн-система */
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }

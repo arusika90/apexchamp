@@ -78,7 +78,7 @@ export function render() {
         <button class="btn s" data-action="reset-data">Сбросить демо-данные</button>
       </section>
     </div>
-    ${footer()}
-  </div>`;
+  </div>
+  ${footer()}`;
 }
 
