@@ -120,7 +120,7 @@ export const workStatus = (w) => w.status || 'submitted';
 
 export const ORG_USER = { id: 'org', name: 'Организатор', initials: 'ОР' };
 export const GUEST_USER = { id: 'guest', name: 'Гость', initials: 'Г' };
-export const DESIGNER_USER = { id: 'designer', name: 'Дизайнер', initials: 'ДЗ' };
+export const DESIGNER_USER = { id: 'designer', name: 'Дизайн-система', initials: 'ДС' };
 export const OWNER_USER = { id: 'owner', name: 'Владелец ApexChamp', initials: 'AC' };
 
 export function sessionUser() {

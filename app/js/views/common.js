@@ -3,7 +3,7 @@ import { st, ui, sessionUser, judgeById, partById } from '../store.js';
 import { esc, I } from '../ui.js';
 import { PERSONAS, currentState, phaseName } from '../personas.js';
 
-export const ROLE_NAME = { org: 'Организатор', judge: 'Судья', part: 'Участник', guest: 'Гость', designer: 'Дизайнер', owner: 'Владелец платформы' };
+export const ROLE_NAME = { org: 'Организатор', judge: 'Судья', part: 'Участник', guest: 'Гость', designer: 'Дизайн-система', owner: 'Владелец платформы' };
 
 const NAV = {
   org: [['org', 'Обзор'], ['org/settings', 'Чемпионат'], ['org/nominations', 'Номинации'], ['org/judges', 'Судьи'], ['org/participants', 'Участники'], ['org/places', 'Места и Гран-при'], ['results', 'Результаты']],
@@ -81,7 +81,7 @@ export function roleModal() {
   const s = st();
   const role = s.session?.role;
   const u = sessionUser();
-  const ROLES = [['org', 'Организатор', I.sliders], ['judge', 'Судья', I.gavel], ['part', 'Участник', I.user], ['guest', 'Гость', I.globe], ['designer', 'Дизайнер', I.palette], ['owner', 'Владелец', I.star]];
+  const ROLES = [['org', 'Организатор', I.sliders], ['judge', 'Судья', I.gavel], ['part', 'Участник', I.user], ['guest', 'Гость', I.globe], ['owner', 'Владелец', I.star], ['designer', 'Дизайн-система', I.palette]];
   const cur = ui.modalRole || role || 'org';
   const tabs = ROLES.map(([r, name, icon]) => `<button type="button" class="tab s ${cur === r ? 'active' : ''}" data-action="modal-role" data-role="${r}">${icon.replace('<svg', '<svg width="16" height="16"')}<span>${name}</span>${role === r ? '<span class="dot-now" aria-label="текущая роль"></span>' : ''}</button>`).join('');
   const list = PERSONAS[cur].map((pr) => {

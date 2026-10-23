@@ -69,8 +69,8 @@ export function render() {
         ${card('judge', 'var(--lemon)', 'var(--warn)', I.gavel, 'Судья', 'Видит только номера работ, ставит баллы и пишет комментарий.')}
         ${card('part', 'var(--ok-bg)', 'var(--ok)', I.user, 'Участник', 'Подаёт работы, потом видит проценты, место и комментарии. Аккаунт создаёт организатор.')}
         ${card('guest', 'var(--fill)', 'var(--ink)', I.globe, 'Гость', 'Публичная таблица без имён участников.')}
-        ${card('designer', 'var(--peach)', 'var(--brand)', I.palette, 'Дизайнер', 'Библиотека дизайн-системы.')}
         ${card('owner', 'var(--lemon)', 'var(--brand-ink)', I.star, 'Владелец платформы', 'Все чемпионаты, организаторы и доступы. Продаёт аренду платформы.')}
+        ${card('designer', 'var(--peach)', 'var(--brand)', I.palette, 'Дизайн-система', 'Цвета, шрифты и компоненты, из которых собран интерфейс.')}
       </div>
 
       <section class="card row-between" style="padding:16px 24px">
