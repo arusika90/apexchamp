@@ -21,8 +21,9 @@ h3 { font-size: var(--fs-h3); font-weight: 700; }
 
 /* Каркас */
 .app { min-height: 100vh; display: flex; flex-direction: column; }
-.topbar { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
-.topbar-in { max-width: var(--page-w); margin: 0 auto; padding: 0 24px; min-height: 64px; display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; }
+.topbar { background: rgba(255, 255, 255, .94); -webkit-backdrop-filter: saturate(180%) blur(12px); backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid var(--line); position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding-top: env(safe-area-inset-top); }
+.app:has(.topbar) { padding-top: calc(64px + env(safe-area-inset-top)); }
+.topbar-in { max-width: var(--page-w); margin: 0 auto; padding: 0 24px; min-height: 64px; height: 64px; display: flex; align-items: center; gap: 16px; flex-wrap: nowrap; }
 .logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--ink); letter-spacing: -.2px; flex: none; }
 .logo-mark { width: 30px; height: 30px; border-radius: 9px; background: var(--platform-brand); display: inline-flex; align-items: center; justify-content: center; }
 .logo-mark svg { width: 18px; height: 18px; }
@@ -295,7 +296,7 @@ body.modal-open { overflow: hidden; }
 .type-row { display: flex; align-items: baseline; gap: 20px; padding: 10px 0; border-top: 1px solid var(--line); }
 .type-row .spec { width: 180px; flex: none; font-size: 12px; color: var(--muted); }
 .demo { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.ds-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 140px; align-self: flex-start; }
+.ds-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 88px; align-self: flex-start; }
 @media (max-width: 1000px) { .ds-nav { display: none; } }
 .ds-nav a { display: flex; align-items: center; height: 40px; padding: 0 12px; border-radius: 10px; color: var(--ink); font-weight: 600; font-size: 14px; }
 .ds-nav a:hover { background: var(--card); }
@@ -304,7 +305,8 @@ code.tok { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-siz
 /* Средняя ширина: шапка в две строки — логотип и пользователь, ниже разделы */
 .burger { display: none; }
 @media (max-width: 1080px) {
-  .topbar-in { min-height: 60px; padding: 0 16px; flex-wrap: nowrap; }
+  .topbar-in { min-height: 60px; height: 60px; padding: 0 16px; flex-wrap: nowrap; }
+  .app:has(.topbar) { padding-top: calc(60px + env(safe-area-inset-top)); }
   .champ-chip { display: none; }
   .nav { display: none; }
   .burger { display: inline-flex; }
